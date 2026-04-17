@@ -1,0 +1,35 @@
+.glass {
+    background: rgba(10, 10, 20, 0.6);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.05);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #00ffff, #ff00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.5));
+}
+
+#start-btn, #restart-btn {
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+#start-btn:hover, #restart-btn:hover {
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.neon-pulse {
+    animation: pulse 2s infinite ease-in-out;
+}

@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLUTCH RUN | High Intensity Reflex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.154.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.154.0/examples/jsm/"
+        }
+      }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Outfit', sans-serif;
+            background-color: #050505;
+        }
+        canvas {
+            display: block;
+        }
+        .glass {
+            background: rgba(15, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 100, 0, 0.2);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.1);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #fbbf24, #ef4444, #7f1d1d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.3));
+        }
+        #game-ui {
+            pointer-events: none;
+        }
+        #game-ui > div {
+            pointer-events: auto;
+        }
+        .touch-zone {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <!-- Loading Screen -->
+    <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-1000">
+        <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <h2 class="text-2xl font-light tracking-widest uppercase">Initializing Engine</h2>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud" class="fixed top-0 left-0 w-full p-6 flex justify-between items-start z-20 pointer-events-none opacity-0 transition-opacity duration-500">
+        <div class="glass px-6 py-3 rounded-2xl">
+            <p class="text-xs uppercase tracking-widest text-yellow-400 font-bold mb-1">Score</p>
+            <h1 id="score-display" class="text-4xl font-black tabular-nums">0</h1>
+        </div>
+        
+        <!-- Clutch Indicator Overlay -->
+        <div id="clutch-msg" class="opacity-0 fixed top-24 left-1/2 -translate-x-1/2 px-6 py-2 bg-yellow-400 text-black font-black italic uppercase tracking-tighter rounded-sm transform -rotate-1 skew-x-12 transition-all duration-300 z-50">
+            CLUTCH! +1,000
+        </div>
+
+        <div class="glass px-6 py-3 rounded-2xl text-right">
+            <p class="text-xs uppercase tracking-widest text-red-500 font-bold mb-1">Mult</p>
+            <h1 id="multiplier-display" class="text-4xl font-black tabular-nums">1.0x</h1>
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="main-menu" class="fixed inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div class="max-w-md w-full p-10 glass rounded-3xl text-center">
+            <h1 class="text-8xl font-black mb-1 text-gradient italic tracking-tighter">CLUTCH</h1>
+            <h2 class="text-2xl font-light tracking-[0.6em] uppercase mb-8 ml-2 text-red-500">Run</h2>
+            
+            <div class="mb-8 text-sm text-gray-400 leading-relaxed">
+                <p>Navigate the neon void. Avoid obstacles, survive as long as possible, and dominate the leaderboard.</p>
+            </div>
+
+            <input type="text" id="username-input" placeholder="ENTER CALLSIGN" 
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 mb-6 text-center focus:outline-none focus:border-blue-500 transition-colors uppercase tracking-widest">
+
+            <button id="start-btn" class="w-full bg-red-600 hover:bg-yellow-500 hover:text-black py-4 rounded-xl font-black uppercase tracking-widest transition-all transform hover:scale-105 active:scale-95 shadow-xl shadow-red-900/40">
+                START RUN
+            </button>
+
+            <div class="mt-8 pt-8 border-t border-white/10">
+                <p class="text-xs uppercase tracking-widest text-gray-500 mb-4">Local High Scores</p>
+                <div id="top-scores" class="space-y-2 text-left text-sm">
+                    <!-- Leaderboard items will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over" class="fixed inset-0 z-40 flex items-center justify-center bg-red-950/40 backdrop-blur-md hidden">
+        <div class="max-w-sm w-full p-10 glass rounded-3xl text-center border-red-500/30">
+            <h2 class="text-5xl font-extrabold mb-2 text-red-500">CRITICAL</h2>
+            <h3 class="text-xl font-light tracking-[0.2em] uppercase mb-8">System Failure</h3>
+            
+            <div class="mb-8 grid grid-cols-2 gap-4">
+                <div class="glass p-4 rounded-xl">
+                    <p class="text-[10px] uppercase text-gray-400 mb-1">Final Score</p>
+                    <p id="final-score" class="text-3xl font-bold">0</p>
+                </div>
+                <div class="glass p-4 rounded-xl">
+                    <p class="text-[10px] uppercase text-gray-400 mb-1">Distance</p>
+                    <p id="final-distance" class="text-3xl font-bold">0m</p>
+                </div>
+            </div>
+
+            <button id="restart-btn" class="w-full bg-white text-black hover:bg-gray-200 py-4 rounded-xl font-bold uppercase tracking-widest transition-all transform hover:scale-105 active:scale-95 mb-4">
+                Try Again
+            </button>
+            <button id="back-btn" class="w-full border border-white/20 hover:bg-white/5 py-4 rounded-xl font-bold uppercase tracking-widest transition-all text-sm opacity-60">
+                Abort to Menu
+            </button>
+        </div>
+    </div>
+
+    <script src="{% static 'js/game.js' %}" type="module"></script>
+</body>
+</html>
