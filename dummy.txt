@@ -24,3 +24,4 @@ Commit sequence 7
 Commit sequence 8
 Commit sequence 9
 Commit sequence 10
+2026-06-01T09:00:00+05:30: docs: update README with installation instructions
