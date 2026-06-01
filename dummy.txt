@@ -27,3 +27,4 @@ Commit sequence 10
 2026-06-01T09:00:00+05:30: docs: update README with installation instructions
 2026-06-01T11:00:00+05:30: feat: add basic player movement logic
 2026-06-01T13:00:00+05:30: fix: resolve collision detection bug on easy mode
+2026-06-01T15:00:00+05:30: style: improve button hover effects in main menu
