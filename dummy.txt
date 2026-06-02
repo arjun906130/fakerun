@@ -30,3 +30,4 @@ Commit sequence 10
 2026-06-01T15:00:00+05:30: style: improve button hover effects in main menu
 2026-06-01T17:00:00+05:30: refactor: clean up score calculation utility
 2026-06-02T09:00:00+05:30: feat: implement high score storage
+2026-06-02T11:00:00+05:30: docs: add contributing guidelines
