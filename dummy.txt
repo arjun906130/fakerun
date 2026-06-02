@@ -32,3 +32,4 @@ Commit sequence 10
 2026-06-02T09:00:00+05:30: feat: implement high score storage
 2026-06-02T11:00:00+05:30: docs: add contributing guidelines
 2026-06-02T13:00:00+05:30: fix: fix character sprite flickering
+2026-06-02T15:00:00+05:30: feat: add background music toggle
