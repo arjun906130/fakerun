@@ -35,3 +35,4 @@ Commit sequence 10
 2026-06-02T15:00:00+05:30: feat: add background music toggle
 2026-06-02T17:00:00+05:30: style: update font for better readability
 2026-06-03T09:00:00+05:30: refactor: reorganize project structure
+2026-06-03T11:00:00+05:30: feat: add difficulty level selection
