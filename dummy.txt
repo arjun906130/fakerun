@@ -44,3 +44,4 @@ Commit sequence 10
 2026-06-04T13:00:00+05:30: style: polish UI animations
 2026-06-04T15:00:00+05:30: refactor: extract constants to separate file
 2026-06-04T17:00:00+05:30: feat: add shield power-up
+2026-06-05T09:00:00+05:30: fix: resolve memory leak in particle system
