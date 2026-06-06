@@ -52,3 +52,4 @@ Commit sequence 10
 2026-06-06T09:00:00+05:30: feat: add sound effects for picking up items
 2026-06-06T11:00:00+05:30: fix: fix incorrect score display in HUD
 2026-06-06T13:00:00+05:30: docs: update changelog for June updates
+2026-06-06T15:00:00+05:30: test: add integration tests for score submission
