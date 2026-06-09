@@ -66,3 +66,4 @@ Commit sequence 10
 2026-06-08T17:00:00+05:30: feat: add support for custom character colors
 2026-06-09T09:00:00+05:30: fix: fix issue with audio not playing on some browsers
 2026-06-09T11:00:00+05:30: docs: add mission statement to README
+2026-06-09T13:00:00+05:30: test: add end-to-end tests for game flow
