@@ -72,3 +72,4 @@ Commit sequence 10
 2026-06-10T09:00:00+05:30: refactor: improve error handling in API calls
 2026-06-10T11:00:00+05:30: feat: add score multiplier for streaks
 2026-06-10T13:00:00+05:30: fix: fix alignment issue in main menu
+2026-06-10T15:00:00+05:30: docs: update developer setup guide
