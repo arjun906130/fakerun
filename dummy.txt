@@ -78,3 +78,4 @@ Commit sequence 10
 2026-06-11T11:00:00+05:30: refactor: streamline data fetching logic
 2026-06-11T13:00:00+05:30: feat: add daily rewards system
 2026-06-11T15:00:00+05:30: fix: fix bug in player name validation
+2026-06-11T17:00:00+05:30: docs: add FAQ section to documentation
