@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from .models import Player, Score
+from .utils import is_valid_username, calculate_rating, format_score
 
 
 def index(request):
@@ -29,6 +30,13 @@ def submit_score(request):
             if not username or score_value is None:
                 return JsonResponse({'status': 'error', 'message': 'Missing username or score'}, status=400)
 
+            # Validate username format (uppercase alphanumeric + underscore, 2–12 chars)
+            if not is_valid_username(username):
+                return JsonResponse(
+                    {'status': 'error', 'message': 'Username must be 2–12 uppercase letters, digits, or underscores'},
+                    status=400
+                )
+
             # Validate score is a non-negative integer
             if not isinstance(score_value, int) or score_value < 0:
                 return JsonResponse({'status': 'error', 'message': 'Score must be a non-negative integer'}, status=400)
@@ -41,6 +49,8 @@ def submit_score(request):
                 'status': 'success',
                 'best_score': player.best_score,
                 'total_runs': player.total_runs,
+                'rating': calculate_rating(score_value),
+                'formatted_score': format_score(score_value),
             })
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON body'}, status=400)
