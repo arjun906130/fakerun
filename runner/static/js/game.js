@@ -17,7 +17,10 @@ class Game {
         this.currentLane = 0;
         this.lanes = [-4, 0, 4];
         this.obstacles = [];
+        this.powerups = [];
         this.buildings = [];
+        this.hasShield = false;
+        this.shieldVisual = null;
         this.clock = new THREE.Clock();
         
         this.init();
@@ -123,6 +126,12 @@ class Game {
         this.playerTilt = new THREE.Group();
         this.playerTilt.add(this.playerGroup);
         this.scene.add(this.playerTilt);
+
+        // Shield Visual (Start hidden)
+        const shieldGeo = new THREE.IcosahedronGeometry(2, 2);
+        const shieldMat = new THREE.MeshBasicMaterial({ color: 0x00ff88, wireframe: true, transparent: true, opacity: 0 });
+        this.shieldVisual = new THREE.Mesh(shieldGeo, shieldMat);
+        this.playerTilt.add(this.shieldVisual);
     }
 
     createTrack() {
@@ -230,7 +239,11 @@ class Game {
         this.currentLane = 0;
         this.playerGroup.position.set(0, 1, 0);
         this.obstacles.forEach(o => this.scene.remove(o));
+        this.powerups.forEach(p => this.scene.remove(p));
         this.obstacles = [];
+        this.powerups = [];
+        this.hasShield = false;
+        if (this.shieldVisual) this.shieldVisual.material.opacity = 0;
         
         this.username = document.getElementById('username-input').value || 'PILOT';
         document.getElementById('main-menu').classList.add('hidden');
@@ -317,6 +330,28 @@ class Game {
         this.obstacles.push(obs);
     }
 
+    spawnPowerup() {
+        const lane = Math.floor(Math.random() * 3) - 1;
+        const color = 0x00ff88;
+        
+        const core = new THREE.Group();
+        const geo = new THREE.SphereGeometry(0.8, 16, 16);
+        const mat = new THREE.MeshStandardMaterial({ color: color, emissive: color, emissiveIntensity: 2 });
+        const mesh = new THREE.Mesh(geo, mat);
+        core.add(mesh);
+
+        // Glow ring
+        const ringGeo = new THREE.TorusGeometry(1.2, 0.05, 16, 32);
+        const ringMat = new THREE.MeshBasicMaterial({ color: color });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        core.add(ring);
+
+        core.position.set(this.lanes[lane + 1], 1.5, -100);
+        this.scene.add(core);
+        this.powerups.push(core);
+    }
+
     update(delta) {
         if (!this.isRunning) return;
 
@@ -367,6 +402,26 @@ class Game {
             }
         }
 
+        // Powerups
+        for (let i = this.powerups.length - 1; i >= 0; i--) {
+            const p = this.powerups[i];
+            p.position.z += moveDist;
+            p.rotation.y += delta * 2;
+
+            const dx = Math.abs(p.position.x - this.playerGroup.position.x);
+            const dz = Math.abs(p.position.z - this.playerGroup.position.z);
+            const dy = Math.abs(p.position.y - this.playerGroup.position.y);
+
+            if (dx < 2 && dz < 1.5) {
+                this.collectPowerup();
+                this.scene.remove(p);
+                this.powerups.splice(i, 1);
+            } else if (p.position.z > 15) {
+                this.scene.remove(p);
+                this.powerups.splice(i, 1);
+            }
+        }
+
         // Buildings
         for (let i = this.buildings.length - 1; i >= 0; i--) {
             const b = this.buildings[i];
@@ -378,7 +433,8 @@ class Game {
             }
         }
 
-        if (Math.random() < 0.025) this.spawnObstacle(); // Slightly lower spawn rate
+        if (Math.random() < 0.025) this.spawnObstacle(); 
+        if (Math.random() < 0.005) this.spawnPowerup(); // Rare powerup spawn
 
         // Animation effects
         this.thrusterL.scale.y = 1 + Math.random();
@@ -391,9 +447,51 @@ class Game {
         this.camera.updateProjectionMatrix();
 
         this.mainLight.position.x = this.playerGroup.position.x;
+
+        if (this.hasShield) {
+            this.shieldVisual.rotation.y += delta * 5;
+            this.shieldVisual.rotation.x += delta * 2;
+            this.shieldVisual.position.copy(this.playerGroup.position);
+        }
+    }
+
+    collectPowerup() {
+        this.hasShield = true;
+        this.multiplier += 0.5;
+        this.score += 5000;
+        
+        // Visuals
+        this.shieldVisual.material.opacity = 0.4;
+        this.bloomPass.strength = 4.0;
+        gsap.to(this.bloomPass, { strength: 1.2, duration: 1.0 });
+
+        const msg = document.getElementById('clutch-msg');
+        const originalText = msg.innerText;
+        msg.innerText = "SHIELD ACTIVATED!";
+        msg.style.color = "#00ff88";
+        msg.style.opacity = '1';
+        
+        setTimeout(() => {
+            msg.style.opacity = '0';
+            setTimeout(() => {
+                msg.innerText = "CLUTCH!";
+                msg.style.color = "";
+            }, 500);
+        }, 1500);
     }
 
     gameOver() {
+        if (this.hasShield) {
+            this.hasShield = false;
+            this.shieldVisual.material.opacity = 0;
+            // Explosion or break effect
+            this.bloomPass.strength = 5.0;
+            gsap.to(this.bloomPass, { strength: 1.2, duration: 0.5 });
+            
+            // Temporary invincibility
+            this.clutchCooldown = 1.0;
+            return;
+        }
         this.isRunning = false;
         document.getElementById('game-over').classList.remove('hidden');
         document.getElementById('final-score').innerText = Math.floor(this.score);

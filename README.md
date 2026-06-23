@@ -23,7 +23,8 @@ An action-packed, web-based 3D endless runner game featuring high-end aesthetics
    - **Shard Obstacles (Gold)**: Block lanes completely; must change lanes to avoid.
 3. **Clutch Mechanic**: Navigating extremely close to obstacles without crashing awards a **CLUTCH!** near-miss bonus (+1,000 pts) and increments your score multiplier.
 4. **Parallax Cityscape**: Procedurally generated cyber-skyscrapers that react dynamically and speed up over time.
-5. **Scoreboard & Leaderboard**: Global high-score tracking submitted to a Django database, updated in real time.
+5. **Power-ups (Energy Cores)**: Occasionally, bright green energy cores will appear. Collecting them grants a **Shield** (protects against one collision) and a **Multiplier Boost**.
+6. **Scoreboard & Leaderboard**: Global high-score tracking submitted to a Django database, updated in real time.
 
 ---
 
