@@ -13,6 +13,7 @@ class Game {
         this.clutchCooldown = 0;
         this.isRunning = false;
         this.isPaused = false;
+        this.difficulty = 'medium';
         this.isSliding = false;
         this.isJumping = false;
         this.currentLane = 0;
@@ -233,6 +234,20 @@ class Game {
         document.getElementById('resume-btn').onclick = () => this.togglePause();
         document.getElementById('pause-back-btn').onclick = () => this.quitToMenu();
         document.getElementById('back-btn').onclick = () => this.quitToMenu();
+
+        // Difficulty buttons
+        const diffBtns = document.querySelectorAll('.diff-btn');
+        diffBtns.forEach(btn => {
+            btn.onclick = () => {
+                this.difficulty = btn.dataset.diff;
+                diffBtns.forEach(b => {
+                    b.classList.remove('border-2', 'bg-red-600/20', 'border-red-500/50', 'opacity-100');
+                    b.classList.add('bg-white/5', 'border-white/10', 'opacity-60');
+                });
+                btn.classList.add('border-2', 'bg-red-600/20', 'border-red-500/50', 'opacity-100');
+                btn.classList.remove('bg-white/5', 'border-white/10', 'opacity-60');
+            };
+        });
     }
 
     togglePause() {
@@ -267,7 +282,18 @@ class Game {
         this.score = 0;
         this.distance = 0;
         this.multiplier = 1.0;
-        this.speed = 0.5;
+        
+        // Difficulty adjustments
+        const configs = {
+            'easy': { speed: 0.35, spawnRate: 0.015, speedInc: 0.00001 },
+            'medium': { speed: 0.5, spawnRate: 0.025, speedInc: 0.00003 },
+            'hard': { speed: 0.7, spawnRate: 0.04, speedInc: 0.00008 }
+        };
+        const config = configs[this.difficulty];
+        this.speed = config.speed;
+        this.spawnRate = config.spawnRate;
+        this.speedInc = config.speedInc;
+
         this.currentLane = 0;
         this.playerGroup.position.set(0, 1, 0);
         this.obstacles.forEach(o => this.scene.remove(o));
@@ -387,7 +413,7 @@ class Game {
     update(delta) {
         if (!this.isRunning) return;
 
-        this.speed += 0.00003; // Slower scaling for Medium experience
+        this.speed += this.speedInc;
         const moveDist = this.speed * 80 * delta;
         this.distance += moveDist * 0.1;
         this.score += moveDist * this.multiplier;
@@ -466,7 +492,7 @@ class Game {
             }
         }
 
-        if (Math.random() < 0.025) this.spawnObstacle(); 
+        if (Math.random() < this.spawnRate) this.spawnObstacle(); 
         if (Math.random() < 0.005) this.spawnPowerup(); // Rare powerup spawn
 
         // Animation effects
