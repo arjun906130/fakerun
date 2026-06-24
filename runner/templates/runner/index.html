@@ -76,9 +76,27 @@
             CLUTCH! +1,000
         </div>
 
+        <div class="glass px-6 py-3 rounded-2xl text-center">
+            <p class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-1">Speed</p>
+            <h1 id="speed-display" class="text-4xl font-black tabular-nums">0</h1>
+        </div>
+
         <div class="glass px-6 py-3 rounded-2xl text-right">
             <p class="text-xs uppercase tracking-widest text-red-500 font-bold mb-1">Mult</p>
             <h1 id="multiplier-display" class="text-4xl font-black tabular-nums">1.0x</h1>
+        </div>
+    </div>
+
+    <!-- Pause Menu -->
+    <div id="pause-menu" class="fixed inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+        <div class="max-w-xs w-full p-8 glass rounded-3xl text-center">
+            <h2 class="text-4xl font-black mb-6 text-gradient italic">PAUSED</h2>
+            <button id="resume-btn" class="w-full bg-cyan-600 hover:bg-cyan-500 py-4 rounded-xl font-bold uppercase tracking-widest transition-all mb-4">
+                RESUME
+            </button>
+            <button id="pause-back-btn" class="w-full border border-white/20 hover:bg-white/5 py-4 rounded-xl font-bold uppercase tracking-widest transition-all text-sm opacity-60">
+                QUIT TO MENU
+            </button>
         </div>
     </div>
 
@@ -90,6 +108,7 @@
             
             <div class="mb-8 text-sm text-gray-400 leading-relaxed">
                 <p>Navigate the neon void. Avoid obstacles, survive as long as possible, and dominate the leaderboard.</p>
+                <p class="mt-2 text-[10px] text-gray-500 lowercase opacity-50">ESC TO PAUSE</p>
             </div>
 
             <input type="text" id="username-input" placeholder="ENTER CALLSIGN" 

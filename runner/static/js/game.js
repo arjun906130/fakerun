@@ -12,6 +12,7 @@ class Game {
         this.targetSpeed = 0.35;
         this.clutchCooldown = 0;
         this.isRunning = false;
+        this.isPaused = false;
         this.isSliding = false;
         this.isJumping = false;
         this.currentLane = 0;
@@ -207,6 +208,7 @@ class Game {
             if (e.key === 'ArrowRight' || e.key === 'd') this.moveLane(1);
             if (e.key === 'ArrowUp' || e.key === 'w') this.jump();
             if (e.key === 'ArrowDown' || e.key === 's') this.slide();
+            if (e.key === 'Escape') this.togglePause();
         });
 
         // Swipe
@@ -228,6 +230,36 @@ class Game {
 
         document.getElementById('start-btn').onclick = () => this.startGame();
         document.getElementById('restart-btn').onclick = () => this.startGame();
+        document.getElementById('resume-btn').onclick = () => this.togglePause();
+        document.getElementById('pause-back-btn').onclick = () => this.quitToMenu();
+        document.getElementById('back-btn').onclick = () => this.quitToMenu();
+    }
+
+    togglePause() {
+        if (!this.isRunning && !this.isPaused) return;
+        
+        if (this.isPaused) {
+            this.isPaused = false;
+            this.isRunning = true;
+            document.getElementById('pause-menu').classList.add('hidden');
+        } else {
+            this.isPaused = true;
+            this.isRunning = false;
+            document.getElementById('pause-menu').classList.remove('hidden');
+        }
+    }
+
+    quitToMenu() {
+        this.isRunning = false;
+        this.isPaused = false;
+        document.getElementById('pause-menu').classList.add('hidden');
+        document.getElementById('game-over').classList.add('hidden');
+        document.getElementById('main-menu').classList.remove('hidden');
+        document.getElementById('hud').style.opacity = '0';
+        this.obstacles.forEach(o => this.scene.remove(o));
+        this.powerups.forEach(p => this.scene.remove(p));
+        this.obstacles = [];
+        this.powerups = [];
     }
 
     startGame() {
@@ -363,6 +395,7 @@ class Game {
         // HUD
         document.getElementById('score-display').innerText = Math.floor(this.score);
         document.getElementById('multiplier-display').innerText = this.multiplier.toFixed(1) + 'x';
+        document.getElementById('speed-display').innerText = Math.floor(this.speed * 100);
 
         // Infinite Track Illusion
         this.grid.position.z += moveDist;
