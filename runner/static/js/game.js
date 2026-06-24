@@ -525,6 +525,7 @@ class Game {
                 this.isNewRecord = true;
                 const label = document.getElementById('high-score-label');
                 label.classList.remove('opacity-0');
+                label.classList.add('pulse-red');
                 gsap.fromTo(label, { scale: 0 }, { scale: 1, duration: 0.3, ease: 'back.out' });
             }
             this.sessionHighScore = currentScore;

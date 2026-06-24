@@ -54,6 +54,14 @@
             height: 100%;
             z-index: 10;
         }
+        @keyframes pulse-record {
+            0% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.1) translateY(-2px); box-shadow: 0 0 15px rgba(239, 68, 68, 0.8); }
+            100% { transform: scale(1) translateY(0); }
+        }
+        .pulse-red {
+            animation: pulse-record 1s infinite ease-in-out;
+        }
     </style>
 </head>
 <body class="text-white">
