@@ -248,6 +248,24 @@ class Game {
                 btn.classList.remove('bg-white/5', 'border-white/10', 'opacity-60');
             };
         });
+
+        // Bloom toggle
+        const bloomToggle = document.getElementById('bloom-toggle');
+        const bloomKnob = document.getElementById('bloom-knob');
+        if (bloomToggle) {
+            bloomToggle.onchange = () => {
+                const enabled = bloomToggle.checked;
+                this.bloomPass.enabled = enabled;
+                if (enabled) {
+                    bloomKnob.classList.add('translate-x-4');
+                    bloomKnob.classList.remove('translate-x-0', 'bg-gray-500');
+                    bloomKnob.classList.add('bg-cyan-500');
+                } else {
+                    bloomKnob.classList.remove('translate-x-4', 'bg-cyan-500');
+                    bloomKnob.classList.add('translate-x-0', 'bg-gray-500');
+                }
+            };
+        }
     }
 
     togglePause() {
