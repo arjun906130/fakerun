@@ -602,6 +602,9 @@ class Game {
     }
 
     collectPowerup() {
+        this.playSound(800, 'sine', 0.5, 0.2);
+        setTimeout(() => this.playSound(1000, 'sine', 0.5, 0.2), 100);
+        
         this.hasShield = true;
         this.multiplier += 0.5;
         this.score += 5000;
@@ -610,6 +613,12 @@ class Game {
         this.shieldVisual.material.opacity = 0.4;
         this.bloomPass.strength = 4.0;
         gsap.to(this.bloomPass, { strength: 1.2, duration: 1.0 });
+
+        // Shake Camera
+        gsap.to(this.camera.position, {
+            x: 0.2, yoyo: true, repeat: 3, duration: 0.05,
+            onComplete: () => this.camera.position.x = 0
+        });
 
         const msg = document.getElementById('clutch-msg');
         const originalText = msg.innerText;
@@ -628,17 +637,34 @@ class Game {
 
     gameOver() {
         if (this.hasShield) {
+            this.playSound(200, 'sawtooth', 0.3, 0.4);
             this.hasShield = false;
             this.shieldVisual.material.opacity = 0;
             // Explosion or break effect
             this.bloomPass.strength = 5.0;
             gsap.to(this.bloomPass, { strength: 1.2, duration: 0.5 });
             
+            // Shake
+            gsap.to(this.camera.position, {
+                x: 1, yoyo: true, repeat: 10, duration: 0.03,
+                onComplete: () => this.camera.position.x = 0
+            });
+
             // Temporary invincibility
             this.clutchCooldown = 1.0;
             return;
         }
         this.playSound(100, 'sawtooth', 0.8, 0.3);
+        
+        // Heavy Shake
+        gsap.to(this.camera.position, {
+            x: 2, y: 6, yoyo: true, repeat: 20, duration: 0.02,
+            onComplete: () => {
+                this.camera.position.x = 0;
+                this.camera.position.y = 4.5;
+            }
+        });
+
         this.isRunning = false;
         document.getElementById('game-over').classList.remove('hidden');
         document.getElementById('final-score').innerText = Math.floor(this.score);
