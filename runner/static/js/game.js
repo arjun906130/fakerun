@@ -23,6 +23,7 @@ class Game {
         this.obstacles = [];
         this.powerups = [];
         this.buildings = [];
+        this.particles = [];
         this.hasShield = false;
         this.shieldVisual = null;
         this.sessionHighScore = 0;
@@ -201,6 +202,20 @@ class Game {
 
         this.scene.add(b);
         this.buildings.push(b);
+    }
+
+    spawnParticle() {
+        const geo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+        const mat = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.8 });
+        const p = new THREE.Mesh(geo, mat);
+        
+        p.position.copy(this.playerGroup.position);
+        p.position.z += 1.5;
+        p.position.x += (Math.random() - 0.5) * 0.4;
+        p.position.y += (Math.random() - 0.5) * 0.2;
+        
+        this.scene.add(p);
+        this.particles.push({ mesh: p, life: 1.0 });
     }
 
     setupEvents() {
@@ -609,6 +624,21 @@ class Game {
         this.camera.updateProjectionMatrix();
 
         this.mainLight.position.x = this.playerGroup.position.x;
+
+        // Particles
+        this.spawnParticle();
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const p = this.particles[i];
+            p.life -= delta * 2;
+            p.mesh.position.z += moveDist * 0.2;
+            p.mesh.scale.setScalar(p.life);
+            p.mesh.material.opacity = p.life;
+            
+            if (p.life <= 0) {
+                this.scene.remove(p.mesh);
+                this.particles.splice(i, 1);
+            }
+        }
 
         if (this.hasShield) {
             this.shieldVisual.rotation.y += delta * 5;
