@@ -66,7 +66,8 @@
 
     <!-- HUD -->
     <div id="hud" class="fixed top-0 left-0 w-full p-6 flex justify-between items-start z-20 pointer-events-none opacity-0 transition-opacity duration-500">
-        <div class="glass px-6 py-3 rounded-2xl">
+        <div class="glass px-6 py-3 rounded-2xl relative">
+            <p id="high-score-label" class="absolute -top-3 left-6 text-[10px] uppercase bg-red-600 px-2 py-0.5 rounded-full font-bold opacity-0 transition-opacity">Record!</p>
             <p class="text-xs uppercase tracking-widest text-yellow-400 font-bold mb-1">Score</p>
             <h1 id="score-display" class="text-4xl font-black tabular-nums">0</h1>
         </div>

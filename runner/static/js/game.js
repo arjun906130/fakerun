@@ -25,6 +25,8 @@ class Game {
         this.buildings = [];
         this.hasShield = false;
         this.shieldVisual = null;
+        this.sessionHighScore = 0;
+        this.isNewRecord = false;
         this.clock = new THREE.Clock();
         
         this.init();
@@ -446,7 +448,19 @@ class Game {
         this.score += moveDist * this.multiplier;
 
         // HUD
-        document.getElementById('score-display').innerText = Math.floor(this.score);
+        const currentScore = Math.floor(this.score);
+        document.getElementById('score-display').innerText = currentScore;
+        
+        if (currentScore > this.sessionHighScore && currentScore > 0) {
+            if (!this.isNewRecord) {
+                this.isNewRecord = true;
+                const label = document.getElementById('high-score-label');
+                label.classList.remove('opacity-0');
+                gsap.fromTo(label, { scale: 0 }, { scale: 1, duration: 0.3, ease: 'back.out' });
+            }
+            this.sessionHighScore = currentScore;
+        }
+
         document.getElementById('multiplier-display').innerText = this.multiplier.toFixed(1) + 'x';
         document.getElementById('speed-display').innerText = Math.floor(this.speed * 100);
 
