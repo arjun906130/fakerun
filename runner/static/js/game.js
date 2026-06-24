@@ -29,6 +29,7 @@ class Game {
         this.sessionHighScore = 0;
         this.isNewRecord = false;
         this.audioEnabled = true;
+        this.nextMilestone = 60;
         this.clock = new THREE.Clock();
         
         this.init();
@@ -531,6 +532,14 @@ class Game {
 
         document.getElementById('multiplier-display').innerText = this.multiplier.toFixed(1) + 'x';
         document.getElementById('speed-display').innerText = Math.floor(this.speed * 100);
+
+        // Speed Milestone Flash
+        if (this.speed * 100 > this.nextMilestone) {
+            this.nextMilestone += 10;
+            this.bloomPass.strength = 5.0;
+            gsap.to(this.bloomPass, { strength: 1.2, duration: 1.0 });
+            this.playSound(1500, 'sine', 0.5, 0.1);
+        }
 
         // Combo timeout check
         if (this.comboTimeout > 0) {
