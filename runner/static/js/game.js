@@ -14,6 +14,8 @@ class Game {
         this.isRunning = false;
         this.isPaused = false;
         this.difficulty = 'medium';
+        this.combo = 0;
+        this.comboTimeout = 0;
         this.isSliding = false;
         this.isJumping = false;
         this.currentLane = 0;
@@ -332,6 +334,13 @@ class Game {
         this.multiplier += 0.2;
         this.score += 1000;
         
+        // Combo increment
+        this.combo++;
+        this.comboTimeout = 3.0; // 3 seconds to get next clutch
+        document.getElementById('combo-hud').classList.remove('opacity-0');
+        document.getElementById('combo-display').innerText = this.combo;
+        gsap.fromTo('#combo-display', { scale: 1.5 }, { scale: 1, duration: 0.2 });
+
         // Visual Feedback
         const msg = document.getElementById('clutch-msg');
         msg.style.opacity = '1';
@@ -440,6 +449,15 @@ class Game {
         document.getElementById('score-display').innerText = Math.floor(this.score);
         document.getElementById('multiplier-display').innerText = this.multiplier.toFixed(1) + 'x';
         document.getElementById('speed-display').innerText = Math.floor(this.speed * 100);
+
+        // Combo timeout check
+        if (this.comboTimeout > 0) {
+            this.comboTimeout -= delta;
+            if (this.comboTimeout <= 0) {
+                this.combo = 0;
+                document.getElementById('combo-hud').classList.add('opacity-0');
+            }
+        }
 
         // Infinite Track Illusion
         this.grid.position.z += moveDist;

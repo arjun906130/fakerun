@@ -81,6 +81,11 @@
             <h1 id="speed-display" class="text-4xl font-black tabular-nums">0</h1>
         </div>
 
+        <div id="combo-hud" class="glass px-6 py-3 rounded-2xl text-center opacity-0 transition-opacity">
+            <p class="text-xs uppercase tracking-widest text-orange-500 font-bold mb-1">Combo</p>
+            <h1 id="combo-display" class="text-4xl font-black tabular-nums">0</h1>
+        </div>
+
         <div class="glass px-6 py-3 rounded-2xl text-right">
             <p class="text-xs uppercase tracking-widest text-red-500 font-bold mb-1">Mult</p>
             <h1 id="multiplier-display" class="text-4xl font-black tabular-nums">1.0x</h1>
@@ -108,6 +113,22 @@
             
             <div class="mb-8 text-sm text-gray-400 leading-relaxed">
                 <p>Navigate the neon void. Avoid obstacles, survive as long as possible, and dominate the leaderboard.</p>
+                
+                <div class="mt-8 flex justify-center gap-6 text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="border border-white/20 px-2 py-1 rounded">A/D</div>
+                        <span>Move</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="border border-white/20 px-2 py-1 rounded">W</div>
+                        <span>Jump</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1">
+                        <div class="border border-white/20 px-2 py-1 rounded">S</div>
+                        <span>Slide</span>
+                    </div>
+                </div>
+
                 <div class="mt-4 flex items-center justify-center gap-4">
                     <p class="text-[10px] text-gray-500 lowercase opacity-50">ESC TO PAUSE</p>
                     <div class="h-1 w-1 bg-white/20 rounded-full"></div>
@@ -140,6 +161,10 @@
                 <div id="top-scores" class="space-y-2 text-left text-sm">
                     <!-- Leaderboard items will be injected here -->
                 </div>
+            </div>
+
+            <div class="mt-6 text-[10px] uppercase tracking-[0.2em] text-gray-600">
+                Developed by <span class="text-red-500/50">Engine Alpha</span> &bull; v1.0.4
             </div>
         </div>
     </div>
