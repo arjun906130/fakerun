@@ -44,6 +44,9 @@ class Game {
         }, 1500);
     }
 
+    /**
+     * Initialize the game engine, Three.js scene, and start the animation loop.
+     */
     init() {
         // Scene setup
         this.scene = new THREE.Scene();
@@ -284,6 +287,13 @@ class Game {
         document.body.appendChild(soundBtn);
     }
 
+    /**
+     * Core sound generator using Web Audio API.
+     * @param {number} freq - Tone frequency
+     * @param {string} type - Waveform type
+     * @param {number} duration - Playtime in seconds
+     * @param {number} volume - Volume gain
+     */
     playSound(freq, type = 'square', duration = 0.1, volume = 0.1) {
         if (!this.audioEnabled) return;
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -303,6 +313,9 @@ class Game {
         osc.stop(ctx.currentTime + duration);
     }
 
+    /**
+     * Toggles play/pause state and updates UI accordingly.
+     */
     togglePause() {
         if (!this.isRunning && !this.isPaused) return;
         
@@ -330,6 +343,9 @@ class Game {
         this.powerups = [];
     }
 
+    /**
+     * Resets game state and hides menus to start a new run.
+     */
     startGame() {
         this.playSound(440, 'square', 0.2);
         setTimeout(() => this.playSound(880, 'square', 0.4), 100);
