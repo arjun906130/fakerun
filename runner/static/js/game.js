@@ -27,6 +27,7 @@ class Game {
         this.shieldVisual = null;
         this.sessionHighScore = 0;
         this.isNewRecord = false;
+        this.audioEnabled = true;
         this.clock = new THREE.Clock();
         
         this.init();
@@ -270,6 +271,36 @@ class Game {
                 }
             };
         }
+
+        // Sound toggle
+        const soundBtn = document.createElement('button');
+        soundBtn.id = 'sound-toggle';
+        soundBtn.className = 'fixed bottom-6 right-6 z-50 glass p-3 rounded-full hover:bg-white/10 transition-all';
+        soundBtn.innerHTML = '🔊';
+        soundBtn.onclick = () => {
+            this.audioEnabled = !this.audioEnabled;
+            soundBtn.innerHTML = this.audioEnabled ? '🔊' : '🔇';
+        };
+        document.body.appendChild(soundBtn);
+    }
+
+    playSound(freq, type = 'square', duration = 0.1, volume = 0.1) {
+        if (!this.audioEnabled) return;
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        
+        gain.gain.setValueAtTime(volume, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+        
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
     }
 
     togglePause() {
@@ -300,6 +331,9 @@ class Game {
     }
 
     startGame() {
+        this.playSound(440, 'square', 0.2);
+        setTimeout(() => this.playSound(880, 'square', 0.4), 100);
+        
         this.isRunning = true;
         this.score = 0;
         this.distance = 0;
@@ -332,6 +366,7 @@ class Game {
     }
 
     triggerClutch() {
+        this.playSound(1200, 'sine', 0.1, 0.2);
         this.clutchCooldown = 1.0;
         this.multiplier += 0.2;
         this.score += 1000;
@@ -375,6 +410,7 @@ class Game {
 
     jump() {
         if (this.isJumping || this.isSliding) return;
+        this.playSound(300, 'triangle', 0.4);
         this.isJumping = true;
         gsap.to(this.playerGroup.position, {
             y: 4.5, duration: 0.4, ease: "power2.out",
@@ -386,6 +422,7 @@ class Game {
 
     slide() {
         if (this.isSliding || this.isJumping) return;
+        this.playSound(150, 'sawtooth', 0.4);
         this.isSliding = true;
         gsap.to(this.playerGroup.scale, { y: 0.3, duration: 0.2 });
         gsap.to(this.playerGroup.position, { y: 0.4, duration: 0.2 });
@@ -601,6 +638,7 @@ class Game {
             this.clutchCooldown = 1.0;
             return;
         }
+        this.playSound(100, 'sawtooth', 0.8, 0.3);
         this.isRunning = false;
         document.getElementById('game-over').classList.remove('hidden');
         document.getElementById('final-score').innerText = Math.floor(this.score);
