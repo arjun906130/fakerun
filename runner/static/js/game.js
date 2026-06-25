@@ -296,11 +296,18 @@ class Game {
         soundBtn.id = 'sound-toggle';
         soundBtn.className = 'fixed bottom-6 right-6 z-50 glass p-3 rounded-full hover:bg-white/10 transition-all';
         soundBtn.innerHTML = '🔊';
-        soundBtn.onclick = () => {
+        const toggleSound = () => {
             this.audioEnabled = !this.audioEnabled;
-            soundBtn.innerHTML = this.audioEnabled ? '🔊' : '🔇';
+            const icon = this.audioEnabled ? '🔊' : '🔇';
+            soundBtn.innerHTML = icon;
+            const hudBtn = document.getElementById('sound-hud-toggle');
+            if (hudBtn) hudBtn.innerHTML = `<span class="text-xl">${icon}</span>`;
         };
+        soundBtn.onclick = toggleSound;
         document.body.appendChild(soundBtn);
+
+        const hudSoundBtn = document.getElementById('sound-hud-toggle');
+        if (hudSoundBtn) hudSoundBtn.onclick = toggleSound;
     }
 
     /**
