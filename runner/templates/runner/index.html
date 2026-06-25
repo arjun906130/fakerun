@@ -136,9 +136,9 @@
                 class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 mb-4 text-center focus:outline-none focus:border-blue-500 transition-colors uppercase tracking-widest">
 
             <div class="grid grid-cols-3 gap-2 mb-6">
-                <button class="diff-btn bg-white/5 border border-white/10 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity" data-diff="easy">Easy</button>
-                <button class="diff-btn border-2 bg-red-600/20 border-red-500/50 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest opacity-100 transition-opacity" data-diff="medium">Medium</button>
-                <button class="diff-btn bg-white/5 border border-white/10 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity" data-diff="hard">Hard</button>
+                <button type="button" class="diff-btn bg-white/5 border border-white/10 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity cursor-pointer" data-diff="easy">Easy</button>
+                <button type="button" class="diff-btn border-2 bg-red-600/20 border-red-500/50 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest opacity-100 transition-opacity cursor-pointer" data-diff="medium">Medium</button>
+                <button type="button" class="diff-btn bg-white/5 border border-white/10 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity cursor-pointer" data-diff="hard">Hard</button>
             </div>
 
             <button id="start-btn"
@@ -151,7 +151,7 @@
                 <span class="text-[10px] uppercase font-bold tracking-widest text-gray-400">Glow Protocol</span>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="bloom-toggle" class="sr-only peer" checked>
-                    <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                    <div id="bloom-knob" class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
                 </label>
             </div>
 
@@ -211,6 +211,12 @@
     </div>
 
     <script src="{% static 'js/game.js' %}" type="module"></script>
+    <style>
+        .diff-btn, #start-btn, #restart-btn, #resume-btn, #pause-back-btn, #back-btn, #sound-hud-toggle {
+            cursor: pointer !important;
+            touch-action: manipulation;
+        }
+    </style>
 </body>
 
 </html>

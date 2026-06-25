@@ -220,6 +220,11 @@ class Game {
     }
 
     setupEvents() {
+        const safeAddEvent = (id, event, callback) => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener(event, callback);
+        };
+
         window.addEventListener('resize', () => {
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
@@ -228,6 +233,7 @@ class Game {
         });
 
         window.addEventListener('keydown', (e) => {
+            if (!this.isRunning && !this.isPaused) return; // Allow keys during pause if needed
             if (!this.isRunning) return;
             if (e.key === 'ArrowLeft' || e.key === 'a') this.moveLane(-1);
             if (e.key === 'ArrowRight' || e.key === 'd') this.moveLane(1);
@@ -236,12 +242,13 @@ class Game {
             if (e.key === 'Escape') this.togglePause();
         });
 
-        // Swipe
+        // Swipe processing
         let startX, startY;
         window.addEventListener('touchstart', e => {
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
-        });
+        }, { passive: true });
+
         window.addEventListener('touchend', e => {
             if (!this.isRunning) return;
             const dx = e.changedTouches[0].clientX - startX;
@@ -251,63 +258,65 @@ class Game {
             } else {
                 if (dy < -40) this.jump(); else if (dy > 40) this.slide();
             }
-        });
+        }, { passive: true });
 
-        document.getElementById('start-btn').onclick = () => this.startGame();
-        document.getElementById('restart-btn').onclick = () => this.startGame();
-        document.getElementById('resume-btn').onclick = () => this.togglePause();
-        document.getElementById('pause-back-btn').onclick = () => this.quitToMenu();
-        document.getElementById('back-btn').onclick = () => this.quitToMenu();
+        // Button Click Listeners
+        safeAddEvent('start-btn', 'click', () => this.startGame());
+        safeAddEvent('restart-btn', 'click', () => this.startGame());
+        safeAddEvent('resume-btn', 'click', () => this.togglePause());
+        safeAddEvent('pause-back-btn', 'click', () => this.quitToMenu());
+        safeAddEvent('back-btn', 'click', () => this.quitToMenu());
 
-        // Difficulty buttons
+        // Difficulty buttons (using Event Delegation or direct loop)
         const diffBtns = document.querySelectorAll('.diff-btn');
         diffBtns.forEach(btn => {
-            btn.onclick = () => {
-                this.difficulty = btn.dataset.diff;
+            btn.addEventListener('click', () => {
+                this.difficulty = btn.getAttribute('data-diff');
+                this.playSound(400, 'sine', 0.1, 0.1); // UI Feedback
+                
+                // Update visuals
                 diffBtns.forEach(b => {
                     b.classList.remove('border-2', 'bg-red-600/20', 'border-red-500/50', 'opacity-100');
                     b.classList.add('bg-white/5', 'border-white/10', 'opacity-60');
                 });
                 btn.classList.add('border-2', 'bg-red-600/20', 'border-red-500/50', 'opacity-100');
                 btn.classList.remove('bg-white/5', 'border-white/10', 'opacity-60');
-            };
+            });
         });
 
         // Bloom toggle
         const bloomToggle = document.getElementById('bloom-toggle');
-        const bloomKnob = document.getElementById('bloom-knob');
         if (bloomToggle) {
-            bloomToggle.onchange = () => {
-                const enabled = bloomToggle.checked;
-                this.bloomPass.enabled = enabled;
-                if (enabled) {
-                    bloomKnob.classList.add('translate-x-4');
-                    bloomKnob.classList.remove('translate-x-0', 'bg-gray-500');
-                    bloomKnob.classList.add('bg-cyan-500');
-                } else {
-                    bloomKnob.classList.remove('translate-x-4', 'bg-cyan-500');
-                    bloomKnob.classList.add('translate-x-0', 'bg-gray-500');
-                }
-            };
+            bloomToggle.addEventListener('change', () => {
+                this.bloomPass.enabled = bloomToggle.checked;
+            });
         }
 
-        // Sound toggle
-        const soundBtn = document.createElement('button');
-        soundBtn.id = 'sound-toggle';
-        soundBtn.className = 'fixed bottom-6 right-6 z-50 glass p-3 rounded-full hover:bg-white/10 transition-all';
-        soundBtn.innerHTML = '🔊';
+        // Sound toggle logic
         const toggleSound = () => {
             this.audioEnabled = !this.audioEnabled;
             const icon = this.audioEnabled ? '🔊' : '🔇';
-            soundBtn.innerHTML = icon;
+            
+            const mainBtn = document.getElementById('sound-toggle');
+            if (mainBtn) mainBtn.innerHTML = icon;
+            
             const hudBtn = document.getElementById('sound-hud-toggle');
             if (hudBtn) hudBtn.innerHTML = `<span class="text-xl">${icon}</span>`;
+            
+            if (this.audioEnabled) this.playSound(800, 'sine', 0.1, 0.1);
         };
-        soundBtn.onclick = toggleSound;
-        document.body.appendChild(soundBtn);
 
-        const hudSoundBtn = document.getElementById('sound-hud-toggle');
-        if (hudSoundBtn) hudSoundBtn.onclick = toggleSound;
+        // Create main sound toggle if it doesn't exist (legacy/backup)
+        if (!document.getElementById('sound-toggle')) {
+            const soundBtn = document.createElement('button');
+            soundBtn.id = 'sound-toggle';
+            soundBtn.className = 'fixed bottom-6 right-6 z-50 glass p-3 rounded-full hover:bg-white/10 transition-all cursor-pointer';
+            soundBtn.innerHTML = '🔊';
+            soundBtn.addEventListener('click', toggleSound);
+            document.body.appendChild(soundBtn);
+        }
+
+        safeAddEvent('sound-hud-toggle', 'click', toggleSound);
     }
 
     /**
@@ -319,7 +328,16 @@ class Game {
      */
     playSound(freq, type = 'square', duration = 0.1, volume = 0.1) {
         if (!this.audioEnabled) return;
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        if (!this.audioCtx) {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        const ctx = this.audioCtx;
+        if (ctx.state === 'suspended') {
+            ctx.resume();
+        }
+        
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         
