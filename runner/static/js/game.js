@@ -620,6 +620,15 @@ class Game {
         for (let i = this.buildings.length - 1; i >= 0; i--) {
             const b = this.buildings[i];
             b.position.z += moveDist * 0.5; // Parallax
+            
+            // Proximity Glow
+            const dist = Math.abs(b.position.z - this.playerGroup.position.z);
+            if (dist < 40) {
+                b.material.emissiveIntensity = 0.2 + (1 - dist/40) * 0.8;
+            } else {
+                b.material.emissiveIntensity = 0.2;
+            }
+
             if (b.position.z > 30) {
                 this.scene.remove(b);
                 this.buildings.splice(i, 1);
