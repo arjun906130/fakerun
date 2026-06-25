@@ -401,7 +401,32 @@ class Game {
         this.username = document.getElementById('username-input').value || 'PILOT';
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('game-over').classList.add('hidden');
-        document.getElementById('hud').style.opacity = '1';
+        
+        // Countdown
+        const countdown = document.createElement('div');
+        countdown.className = 'fixed inset-0 z-50 flex items-center justify-center text-9xl font-black italic text-white pointer-events-none';
+        document.body.appendChild(countdown);
+        
+        let count = 3;
+        this.isRunning = false; // Stay paused during countdown
+        
+        const timer = setInterval(() => {
+            if (count > 0) {
+                countdown.innerText = count;
+                this.playSound(600, 'sine', 0.2, 0.2);
+                gsap.fromTo(countdown, { scale: 2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3 });
+                gsap.to(countdown, { opacity: 0, duration: 0.2, delay: 0.7 });
+                count--;
+            } else {
+                clearInterval(timer);
+                countdown.innerText = "GO!";
+                this.playSound(1200, 'sine', 0.5, 0.4);
+                gsap.fromTo(countdown, { scale: 2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3 });
+                gsap.to(countdown, { opacity: 0, scale: 3, duration: 0.5, onComplete: () => countdown.remove() });
+                this.isRunning = true;
+                document.getElementById('hud').style.opacity = '1';
+            }
+        }, 1000);
     }
 
     triggerClutch() {
