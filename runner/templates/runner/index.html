@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,27 +26,33 @@
             font-family: 'Outfit', sans-serif;
             background-color: #050505;
         }
+
         canvas {
             display: block;
         }
+
         .glass {
             background: rgba(15, 0, 0, 0.7);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 100, 0, 0.2);
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.1);
         }
+
         .text-gradient {
             background: linear-gradient(135deg, #fbbf24, #ef4444, #7f1d1d);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.3));
         }
+
         #game-ui {
             pointer-events: none;
         }
-        #game-ui > div {
+
+        #game-ui>div {
             pointer-events: auto;
         }
+
         .touch-zone {
             position: absolute;
             top: 0;
@@ -54,45 +61,30 @@
             height: 100%;
             z-index: 10;
         }
-        @keyframes pulse-record {
-            0% { transform: scale(1) translateY(0); }
-            50% { transform: scale(1.1) translateY(-2px); box-shadow: 0 0 15px rgba(239, 68, 68, 0.8); }
-            100% { transform: scale(1) translateY(0); }
-        }
-        .pulse-red {
-            animation: pulse-record 1s infinite ease-in-out;
-        }
     </style>
 </head>
+
 <body class="text-white">
 
     <!-- Loading Screen -->
-    <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-1000">
+    <div id="loader"
+        class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-1000">
         <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
         <h2 class="text-2xl font-light tracking-widest uppercase">Initializing Engine</h2>
     </div>
 
     <!-- HUD -->
-    <div id="hud" class="fixed top-0 left-0 w-full p-6 flex justify-between items-start z-20 pointer-events-none opacity-0 transition-opacity duration-500">
-        <div class="glass px-6 py-3 rounded-2xl relative">
-            <p id="high-score-label" class="absolute -top-3 left-6 text-[10px] uppercase bg-red-600 px-2 py-0.5 rounded-full font-bold opacity-0 transition-opacity">Record!</p>
+    <div id="hud"
+        class="fixed top-0 left-0 w-full p-6 flex justify-between items-start z-20 pointer-events-none opacity-0 transition-opacity duration-500">
+        <div class="glass px-6 py-3 rounded-2xl">
             <p class="text-xs uppercase tracking-widest text-yellow-400 font-bold mb-1">Score</p>
             <h1 id="score-display" class="text-4xl font-black tabular-nums">0</h1>
         </div>
-        
+
         <!-- Clutch Indicator Overlay -->
-        <div id="clutch-msg" class="opacity-0 fixed top-24 left-1/2 -translate-x-1/2 px-6 py-2 bg-yellow-400 text-black font-black italic uppercase tracking-tighter rounded-sm transform -rotate-1 skew-x-12 transition-all duration-300 z-50">
+        <div id="clutch-msg"
+            class="opacity-0 fixed top-24 left-1/2 -translate-x-1/2 px-6 py-2 bg-yellow-400 text-black font-black italic uppercase tracking-tighter rounded-sm transform -rotate-1 skew-x-12 transition-all duration-300 z-50">
             CLUTCH! +1,000
-        </div>
-
-        <div class="glass px-6 py-3 rounded-2xl text-center">
-            <p class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-1">Speed</p>
-            <h1 id="speed-display" class="text-4xl font-black tabular-nums">0</h1>
-        </div>
-
-        <div id="combo-hud" class="glass px-6 py-3 rounded-2xl text-center opacity-0 transition-opacity">
-            <p class="text-xs uppercase tracking-widest text-orange-500 font-bold mb-1">Combo</p>
-            <h1 id="combo-display" class="text-4xl font-black tabular-nums">0</h1>
         </div>
 
         <div class="glass px-6 py-3 rounded-2xl text-right">
@@ -101,67 +93,22 @@
         </div>
     </div>
 
-    <!-- Pause Menu -->
-    <div id="pause-menu" class="fixed inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
-        <div class="max-w-xs w-full p-8 glass rounded-3xl text-center">
-            <h2 class="text-4xl font-black mb-6 text-gradient italic">PAUSED</h2>
-            <button id="resume-btn" class="w-full bg-cyan-600 hover:bg-cyan-500 py-4 rounded-xl font-bold uppercase tracking-widest transition-all mb-4">
-                RESUME
-            </button>
-            <button id="pause-back-btn" class="w-full border border-white/20 hover:bg-white/5 py-4 rounded-xl font-bold uppercase tracking-widest transition-all text-sm opacity-60">
-                QUIT TO MENU
-            </button>
-        </div>
-    </div>
-
     <!-- Main Menu -->
     <div id="main-menu" class="fixed inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm">
         <div class="max-w-md w-full p-10 glass rounded-3xl text-center">
             <h1 class="text-8xl font-black mb-1 text-gradient italic tracking-tighter">CLUTCH</h1>
             <h2 class="text-2xl font-light tracking-[0.6em] uppercase mb-8 ml-2 text-red-500">Run</h2>
-            
+
             <div class="mb-8 text-sm text-gray-400 leading-relaxed">
-                <p>Navigate the neon void. Avoid obstacles, survive as long as possible, and dominate the leaderboard.</p>
-                
-                <div class="mt-8 flex justify-center gap-6 text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">
-                    <div class="flex flex-col items-center gap-1">
-                        <div class="border border-white/20 px-2 py-1 rounded">A/D</div>
-                        <span>Move</span>
-                    </div>
-                    <div class="flex flex-col items-center gap-1">
-                        <div class="border border-white/20 px-2 py-1 rounded">W</div>
-                        <span>Jump</span>
-                    </div>
-                    <div class="flex flex-col items-center gap-1">
-                        <div class="border border-white/20 px-2 py-1 rounded">S</div>
-                        <span>Slide</span>
-                    </div>
-                </div>
-
-                <div class="mt-4 flex items-center justify-center gap-4">
-                    <p class="text-[10px] text-gray-500 lowercase opacity-50">ESC TO PAUSE</p>
-                    <div class="h-1 w-1 bg-white/20 rounded-full"></div>
-                    <label class="flex items-center gap-2 cursor-pointer group">
-                        <input type="checkbox" id="bloom-toggle" checked class="hidden">
-                        <div class="w-8 h-4 bg-white/10 rounded-full p-0.5 transition-colors group-hover:bg-white/20">
-                            <div id="bloom-knob" class="w-3 h-3 bg-cyan-500 rounded-full transition-transform translate-x-4"></div>
-                        </div>
-                        <span class="text-[10px] uppercase tracking-widest text-gray-400 group-hover:text-white transition-colors">Bloom FX</span>
-                    </label>
-                </div>
+                <p>Navigate the neon void. Avoid obstacles, survive as long as possible, and dominate the leaderboard.
+                </p>
             </div>
 
-            <input type="text" id="username-input" placeholder="ENTER CALLSIGN" 
-                class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 mb-4 text-center focus:outline-none focus:border-blue-500 transition-colors uppercase tracking-widest">
+            <input type="text" id="username-input" placeholder="ENTER CALLSIGN"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 mb-6 text-center focus:outline-none focus:border-blue-500 transition-colors uppercase tracking-widest">
 
-            <!-- Difficulty Selector -->
-            <div class="flex gap-2 mb-6" id="difficulty-selector">
-                <button class="diff-btn flex-1 bg-white/5 border border-white/10 py-3 rounded-xl text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all font-bold opacity-60" data-diff="easy">Easy</button>
-                <button class="diff-btn flex-1 bg-red-600/20 border border-red-500/50 py-3 rounded-xl text-[10px] uppercase tracking-widest hover:bg-red-500/30 transition-all font-bold border-2" data-diff="medium">Medium</button>
-                <button class="diff-btn flex-1 bg-white/5 border border-white/10 py-3 rounded-xl text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all font-bold opacity-60" data-diff="hard">Hard</button>
-            </div>
-
-            <button id="start-btn" class="w-full bg-red-600 hover:bg-yellow-500 hover:text-black py-4 rounded-xl font-black uppercase tracking-widest transition-all transform hover:scale-105 active:scale-95 shadow-xl shadow-red-900/40">
+            <button id="start-btn"
+                class="w-full bg-red-600 hover:bg-yellow-500 hover:text-black py-4 rounded-xl font-black uppercase tracking-widest transition-all transform hover:scale-105 active:scale-95 shadow-xl shadow-red-900/40">
                 START RUN
             </button>
 
@@ -171,19 +118,16 @@
                     <!-- Leaderboard items will be injected here -->
                 </div>
             </div>
-
-            <div class="mt-6 text-[10px] uppercase tracking-[0.2em] text-gray-600">
-                Developed by <span class="text-red-500/50">Engine Alpha</span> &bull; v1.0.4
-            </div>
         </div>
     </div>
 
     <!-- Game Over Screen -->
-    <div id="game-over" class="fixed inset-0 z-40 flex items-center justify-center bg-red-950/40 backdrop-blur-md hidden">
+    <div id="game-over"
+        class="fixed inset-0 z-40 flex items-center justify-center bg-red-950/40 backdrop-blur-md hidden">
         <div class="max-w-sm w-full p-10 glass rounded-3xl text-center border-red-500/30">
             <h2 class="text-5xl font-extrabold mb-2 text-red-500">CRITICAL</h2>
             <h3 class="text-xl font-light tracking-[0.2em] uppercase mb-8">System Failure</h3>
-            
+
             <div class="mb-8 grid grid-cols-2 gap-4">
                 <div class="glass p-4 rounded-xl">
                     <p class="text-[10px] uppercase text-gray-400 mb-1">Final Score</p>
@@ -195,10 +139,29 @@
                 </div>
             </div>
 
-            <button id="restart-btn" class="w-full bg-white text-black hover:bg-gray-200 py-4 rounded-xl font-bold uppercase tracking-widest transition-all transform hover:scale-105 active:scale-95 mb-4">
+            <button id="restart-btn"
+                class="w-full bg-white text-black hover:bg-gray-200 py-4 rounded-xl font-bold uppercase tracking-widest transition-all transform hover:scale-105 active:scale-95 mb-4">
                 Try Again
             </button>
-            <button id="back-btn" class="w-full border border-white/20 hover:bg-white/5 py-4 rounded-xl font-bold uppercase tracking-widest transition-all text-sm opacity-60">
+            <button id="back-btn"
+                class="w-full border border-white/20 hover:bg-white/5 py-4 rounded-xl font-bold uppercase tracking-widest transition-all text-sm opacity-60">
+                Abort to Menu
+            </button>
+        </div>
+    </div>
+
+    <!-- Pause Menu -->
+    <div id="pause-menu"
+        class="fixed inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-md hidden">
+        <div class="max-w-sm w-full p-10 glass rounded-3xl text-center">
+            <h2 class="text-5xl font-black mb-8 text-gradient italic">PAUSED</h2>
+
+            <button id="resume-btn"
+                class="w-full bg-white text-black hover:bg-gray-200 py-4 rounded-xl font-bold uppercase tracking-widest transition-all transform hover:scale-105 active:scale-95 mb-4">
+                Resume Mission
+            </button>
+            <button id="pause-back-btn"
+                class="w-full border border-white/20 hover:bg-white/5 py-4 rounded-xl font-bold uppercase tracking-widest transition-all text-sm opacity-60">
                 Abort to Menu
             </button>
         </div>
@@ -206,4 +169,5 @@
 
     <script src="{% static 'js/game.js' %}" type="module"></script>
 </body>
+
 </html>
