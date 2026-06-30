@@ -71,6 +71,16 @@
         .pulse-red {
             animation: pulse-red 1.5s infinite;
         }
+
+        @keyframes bg-glow {
+            0% { background: rgba(5, 5, 5, 0.8); }
+            50% { background: rgba(10, 0, 20, 0.85); }
+            100% { background: rgba(5, 5, 5, 0.8); }
+        }
+
+        #main-menu {
+            animation: bg-glow 8s infinite ease-in-out;
+        }
     </style>
 </head>
 
