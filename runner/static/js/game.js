@@ -1,3 +1,9 @@
+/**
+ * CLUTCH RUN | Core Game Engine
+ * Version: 1.2.0
+ * Author: Arjun
+ * GitHub: https://github.com/arjun906130
+ */
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
