@@ -4,6 +4,16 @@ An action-packed, web-based 3D endless runner game featuring high-end aesthetics
 
 ---
 
+## 🌟 Key Features
+
+*   **Custom 3D Engine**: Built on Three.js with advanced post-processing (Bloom, Noise, Grain).
+*   **Procedural Generation**: Endless track and environment generation ensuring a unique run every time.
+*   **Responsive Hybrid Controls**: Optimized for both Keyboard (WASD/Arrows) and Mobile Touch (Swipes).
+*   **Live Leaderboard**: Real-time score tracking and persistent ranking system via Django.
+*   **Audio immersion**: Dynamic sound engine that scales with game velocity.
+
+---
+
 ## 🚀 Technologies Used
 
 - **Frontend Core**: HTML5, Three.js (WebGL 3D Rendering & Bloom Post-processing), GSAP (Animations & Tweens)
@@ -68,3 +78,21 @@ python manage.py runserver
 ```
 
 Open your browser and play at **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)**.
+
+---
+
+## 📁 Project Structure
+
+```text
+fakerun/
+├── fakerun_project/    # Django Project configuration
+├── runner/              # Main game application logic
+│   ├── static/         # 3D Assets, JS modules, CSS
+│   ├── templates/      # HTML entry point
+│   ├── models.py       # Leaderboard database schemas
+│   └── views.py        # API endpoints and page routing
+├── staticfiles/        # Collected static assets for production
+├── manage.py           # Django CLI
+└── requirements.txt    # Project dependencies
+```
+
