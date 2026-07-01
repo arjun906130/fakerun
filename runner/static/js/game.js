@@ -1,6 +1,6 @@
 /**
  * CLUTCH RUN | Core Game Engine
- * Version: 1.2.0
+ * Version: 1.3.0
  * Author: Arjun
  * GitHub: https://github.com/arjun906130
  */
