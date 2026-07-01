@@ -624,6 +624,10 @@ class Game {
         // Combo timeout check
         if (this.comboTimeout > 0) {
             this.comboTimeout -= delta;
+            
+            const pct = (this.comboTimeout / 3.0) * 100;
+            document.getElementById('combo-progress').style.width = pct + '%';
+
             if (this.comboTimeout <= 0) {
                 this.combo = 0;
                 document.getElementById('combo-hud').classList.add('opacity-0');
