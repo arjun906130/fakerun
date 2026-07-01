@@ -510,6 +510,10 @@ class Game {
         }, 800);
     }
 
+    /**
+     * Handles lane switching with smooth GSAP transitions and ship tilt.
+     * @param {number} dir - Direction of movement (-1 for left, 1 for right)
+     */
     moveLane(dir) {
         const n = Math.max(-1, Math.min(1, this.currentLane + dir));
         if (n !== this.currentLane) {
@@ -519,6 +523,9 @@ class Game {
         }
     }
 
+    /**
+     * Executes a jump maneuver with vertical propulsion animation.
+     */
     jump() {
         if (this.isJumping || this.isSliding) return;
         this.playSound(300, 'triangle', 0.4);
@@ -531,6 +538,9 @@ class Game {
         });
     }
 
+    /**
+     * Executes a slide maneuver by scaling the ship group vertically.
+     */
     slide() {
         if (this.isSliding || this.isJumping) return;
         this.playSound(150, 'sawtooth', 0.4);
@@ -544,6 +554,9 @@ class Game {
         }, 800);
     }
 
+    /**
+     * Spawns a new obstacle at a random lane with varying types.
+     */
     spawnObstacle() {
         const lane = Math.floor(Math.random() * 3) - 1;
         const type = Math.random();
