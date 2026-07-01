@@ -42,14 +42,37 @@ class Game {
         this.setupEvents();
         this.loadLeaderboard();
         
-        // Remove loader
-        setTimeout(() => {
-            const loader = document.getElementById('loader');
-            if (loader) {
-                loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 1000);
+        // Simulated Loader
+        let progress = 0;
+        const statusText = [
+            "Syncing Hyper-Drive",
+            "Calibrating Thrusters",
+            "Charging Neon Flux",
+            "Establishing Link"
+        ];
+        
+        const loaderInt = setInterval(() => {
+            progress += Math.floor(Math.random() * 5) + 2;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(loaderInt);
+                
+                const loader = document.getElementById('loader');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.style.display = 'none', 1000);
+                }
             }
-        }, 1500);
+            
+            const pctEl = document.getElementById('load-pct');
+            if (pctEl) pctEl.innerText = `${progress}%`;
+            
+            const statusEl = document.getElementById('loader-status');
+            if (statusEl) {
+                const idx = Math.floor((progress / 100) * (statusText.length - 1));
+                statusEl.innerText = statusText[idx];
+            }
+        }, 50);
     }
 
     /**
