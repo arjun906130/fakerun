@@ -813,6 +813,21 @@ class Game {
         document.getElementById('game-over').classList.remove('hidden');
         document.getElementById('final-score').innerText = Math.floor(this.score);
         document.getElementById('final-distance').innerText = Math.floor(this.distance) + 'm';
+        
+        // Calculate Rating
+        const s = Math.floor(this.score);
+        let rank = 'C';
+        let color = '#9ca3af'; // Gray
+        if (s > 100000) { rank = 'S+'; color = '#fbbf24'; }
+        else if (s > 50000) { rank = 'S'; color = '#f87171'; }
+        else if (s > 25000) { rank = 'A'; color = '#f472b6'; }
+        else if (s > 10000) { rank = 'B'; color = '#60a5fa'; }
+        
+        const rankEl = document.getElementById('rating-value');
+        rankEl.innerText = rank;
+        rankEl.style.color = color;
+        gsap.fromTo(rankEl, { scale: 5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out' });
+
         this.submitScore();
     }
 
