@@ -81,10 +81,50 @@
         #main-menu {
             animation: bg-glow 8s infinite ease-in-out;
         }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            opacity: 0.15;
+        }
+
+        @keyframes scanline-move {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .scanline-light {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(
+                to bottom,
+                transparent,
+                rgba(239, 68, 68, 0.05),
+                transparent
+            );
+            pointer-events: none;
+            z-index: 101;
+            animation: scanline-move 10s linear infinite;
+        }
     </style>
 </head>
 
 <body class="text-white">
+    <div class="scanlines"></div>
+    <div class="scanline-light"></div>
 
     <!-- Loading Screen -->
     <div id="loader"
