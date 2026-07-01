@@ -184,8 +184,8 @@
                 </p>
             </div>
 
-            <input type="text" id="username-input" placeholder="ENTER CALLSIGN"
-                class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 mb-4 text-center focus:outline-none focus:border-blue-500 transition-colors uppercase tracking-widest">
+            <input type="text" id="username-input" placeholder="ENTER CALLSIGN" maxlength="12" pattern="[A-Z0-9]+"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 mb-4 text-center focus:outline-none focus:border-blue-500 transition-colors uppercase tracking-widest font-bold">
 
             <div class="grid grid-cols-3 gap-2 mb-6">
                 <button type="button" class="diff-btn bg-white/5 border border-cyan-500/30 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity cursor-pointer" data-diff="easy">Easy</button>
