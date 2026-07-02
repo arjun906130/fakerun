@@ -3,3 +3,4 @@ Commit sequence 1
 Commit sequence 2
 Commit sequence 3
 Commit sequence 4
+Commit sequence 5
