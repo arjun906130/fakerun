@@ -5,3 +5,4 @@ Commit sequence 3
 Commit sequence 4
 Commit sequence 5
 Commit sequence 6
+Commit sequence 7
