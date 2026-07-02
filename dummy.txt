@@ -1,2 +1,3 @@
 Commit 1
 Commit sequence 1
+Commit sequence 2
