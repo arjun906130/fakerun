@@ -1,0 +1,58 @@
+﻿/*
+ * game.css â€” Supplementary game-specific CSS not covered by TailwindCSS.
+ * Handles complex animations, 3D transforms, and custom UI components.
+ */
+
+/* â”€â”€â”€ Speed Lines (motion blur effect on fast runs) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.speed-lines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 15;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(255, 50, 0, 0.04) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.speed-lines.active { opacity: 1; }
+
+/* â”€â”€â”€ Shield Glow (when Energy Core shield is active) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@keyframes shield-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.6); }
+  70%  { box-shadow: 0 0 0 16px rgba(0, 255, 136, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+}
+.shield-active { animation: shield-pulse 1.2s infinite; }
+
+/* â”€â”€â”€ Rating Badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.rating-s { color: #facc15; text-shadow: 0 0 20px rgba(250, 204, 21, 0.8); }
+.rating-a { color: #22d3ee; text-shadow: 0 0 20px rgba(34, 211, 238, 0.6); }
+.rating-b { color: #a3e635; text-shadow: 0 0 20px rgba(163, 230, 53, 0.5); }
+.rating-c { color: #fb923c; text-shadow: 0 0 15px rgba(251, 146, 60, 0.5); }
+.rating-d { color: #9ca3af; }
+
+/* â”€â”€â”€ Clutch Flash Text â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@keyframes clutch-pop {
+  0%   { transform: translateX(-50%) scale(0.6) rotate(-3deg); opacity: 0; }
+  30%  { transform: translateX(-50%) scale(1.1) rotate(2deg);  opacity: 1; }
+  80%  { transform: translateX(-50%) scale(1.0) rotate(0deg);  opacity: 1; }
+  100% { transform: translateX(-50%) scale(0.9) rotate(0deg);  opacity: 0; }
+}
+.clutch-animate { animation: clutch-pop 0.9s ease forwards; }
+
+/* â”€â”€â”€ Leaderboard Entry Hover â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+.leaderboard-entry {
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.leaderboard-entry:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
+}
+
+/* â”€â”€â”€ Responsive: hide combo bar on very small screens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+@media (max-height: 500px) {
+  #combo-hud { display: none !important; }
+}
