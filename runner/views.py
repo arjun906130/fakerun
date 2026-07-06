@@ -2,7 +2,9 @@ import json
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from .models import Player, Score
+
 
 def index(request):
     """
@@ -10,43 +12,92 @@ def index(request):
     """
     return render(request, 'runner/index.html')
 
+
 @csrf_exempt
 def submit_score(request):
     """
     API endpoint to submit a new score for a player.
-    Creates player if they don't exist.
+    Creates the player profile if they do not already exist.
     """
     if request.method == 'POST':
         try:
-            # Parse request body
             data = json.loads(request.body)
-            username = data.get('username')
+            username = data.get('username', '').strip()
             score_value = data.get('score')
-            
-            # Validation
+
+            # Validation: require both fields
             if not username or score_value is None:
-                return JsonResponse({'status': 'error', 'message': 'Missing data'}, status=400)
-            
-            # Atomic update or create player profile
-            player, created = Player.objects.get_or_create(username=username)
-            # Log the score entry
+                return JsonResponse({'status': 'error', 'message': 'Missing username or score'}, status=400)
+
+            # Validate score is a non-negative integer
+            if not isinstance(score_value, int) or score_value < 0:
+                return JsonResponse({'status': 'error', 'message': 'Score must be a non-negative integer'}, status=400)
+
+            # Atomic get-or-create player profile, then log the score
+            player, _ = Player.objects.get_or_create(username=username)
             Score.objects.create(player=player, score=score_value)
-            
-            return JsonResponse({'status': 'success'})
+
+            return JsonResponse({
+                'status': 'success',
+                'best_score': player.best_score,
+                'total_runs': player.total_runs,
+            })
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON body'}, status=400)
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-    return JsonResponse({'status': 'error', 'message': 'Invalid method'}, status=405)
+
+    return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
+
 
 def get_leaderboard(request):
     """
-    Retrieves the top 10 historical high scores.
+    Retrieves the top 15 all-time high scores for the global leaderboard.
+    Returns a JSON response with username, score, and formatted timestamp.
     """
-    # Fetch top 10 scores sorted by score value (assuming default ordering is handled in models or here)
-    # Note: Score model should likely have an ordering meta-flag or use .order_by('-score')
-    top_scores = Score.objects.all().order_by('-score')[:10]
+    top_scores = Score.objects.select_related('player').order_by('-score')[:15]
     leaderboard = [
-        {'username': score.player.username, 'score': score.score, 'timestamp': score.timestamp.strftime('%Y-%m-%d %H:%M')}
-        for score in top_scores
+        {
+            'rank': idx + 1,
+            'username': score.player.username,
+            'score': score.score,
+            'timestamp': score.timestamp.strftime('%Y-%m-%d %H:%M'),
+        }
+        for idx, score in enumerate(top_scores)
     ]
     return JsonResponse({'leaderboard': leaderboard})
 
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+def reset_scores(request, username):
+    """
+    API endpoint to delete all score records for a specific player.
+    Allows a player to wipe their history and start fresh.
+    """
+    try:
+        player = Player.objects.get(username=username)
+        deleted_count, _ = player.scores.all().delete()
+        return JsonResponse({'status': 'success', 'deleted': deleted_count})
+    except Player.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Player not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+def get_player_stats(request, username):
+    """
+    API endpoint to retrieve aggregated statistics for a specific player.
+    Returns best score, total runs, and average score.
+    """
+    try:
+        player = Player.objects.get(username=username)
+        return JsonResponse({
+            'username': player.username,
+            'best_score': player.best_score,
+            'total_runs': player.total_runs,
+            'average_score': player.average_score,
+            'member_since': player.created_at.strftime('%Y-%m-%d'),
+        })
+    except Player.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Player not found'}, status=404)
