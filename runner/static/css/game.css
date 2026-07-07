@@ -1,4 +1,4 @@
-﻿/*
+/*
  * game.css â€” Supplementary game-specific CSS not covered by TailwindCSS.
  * Handles complex animations, 3D transforms, and custom UI components.
  */
@@ -52,7 +52,46 @@
   transform: translateX(4px);
 }
 
-/* â”€â”€â”€ Responsive: hide combo bar on very small screens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* --- Game Over Screen Entrance -------------------------------------------- */
+@keyframes game-over-entrance {
+  0%   { opacity: 0; transform: scale(1.15) translateY(-30px); filter: blur(8px); }
+  40%  { opacity: 1; transform: scale(0.97) translateY(5px);   filter: blur(0); }
+  70%  { transform: scale(1.02) translateY(-2px); }
+  100% { transform: scale(1) translateY(0); }
+}
+.game-over-enter {
+  animation: game-over-entrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* --- Death Burst Particles ------------------------------------------------ */
+@keyframes death-burst {
+  0%   { opacity: 1; transform: scale(0); }
+  50%  { opacity: 0.6; transform: scale(1.8); }
+  100% { opacity: 0; transform: scale(2.5); }
+}
+.death-burst {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  margin: -60px 0 0 -60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.5), transparent 70%);
+  pointer-events: none;
+  z-index: 39;
+  animation: death-burst 0.6s ease-out forwards;
+}
+
+/* --- Score Count-up Glow -------------------------------------------------- */
+@keyframes score-glow {
+  0%   { text-shadow: 0 0 0 rgba(250, 204, 21, 0); }
+  50%  { text-shadow: 0 0 20px rgba(250, 204, 21, 0.8); }
+  100% { text-shadow: 0 0 0 rgba(250, 204, 21, 0); }
+}
+.score-counting { animation: score-glow 0.4s ease-in-out infinite; }
+
+/* --- Responsive: hide combo bar on very small screens --------------------- */
 @media (max-height: 500px) {
   #combo-hud { display: none !important; }
 }
