@@ -14,6 +14,13 @@ def index(request):
     return render(request, 'runner/index.html')
 
 
+def privacy_policy(request):
+    """
+    Renders the privacy policy page.
+    """
+    return render(request, 'runner/privacy.html')
+
+
 @csrf_exempt
 def submit_score(request):
     """

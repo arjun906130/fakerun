@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | CLUTCH RUN</title>
+    <meta name="description" content="Privacy Policy for CLUTCH RUN — learn how we handle your gameplay data, scores, and personal information.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background-color: #050505;
+            color: #d1d5db;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="min-h-screen flex items-center justify-center p-6">
+        <div class="max-w-2xl w-full glass rounded-3xl p-10">
+            <h1 class="text-4xl font-black text-gradient italic tracking-tighter mb-2">Privacy Policy</h1>
+            <p class="text-xs uppercase tracking-widest text-gray-500 mb-8">Last updated: July 2026</p>
+
+            <section class="mb-6">
+                <h2 class="text-lg font-bold text-white mb-2">1. Data We Collect</h2>
+                <p class="text-sm leading-relaxed">
+                    CLUTCH RUN collects only the information you voluntarily provide:
+                    your chosen <strong>callsign</strong> (username) and your <strong>game scores</strong>.
+                    We do not collect email addresses, passwords, or any personally-identifiable information.
+                </p>
+            </section>
+
+            <section class="mb-6">
+                <h2 class="text-lg font-bold text-white mb-2">2. How We Use Your Data</h2>
+                <p class="text-sm leading-relaxed">
+                    Your callsign and scores are stored solely for the purpose of maintaining
+                    the in-game <strong>global leaderboard</strong> and displaying your personal statistics.
+                    We do not sell, share, or distribute your data to any third party.
+                </p>
+            </section>
+
+            <section class="mb-6">
+                <h2 class="text-lg font-bold text-white mb-2">3. Data Storage</h2>
+                <p class="text-sm leading-relaxed">
+                    All data is stored in a server-side SQLite database. User preferences
+                    (e.g. sound settings, bloom toggle) are stored locally in your browser
+                    via <code class="bg-white/10 px-1 rounded text-xs">localStorage</code>
+                    and never leave your device.
+                </p>
+            </section>
+
+            <section class="mb-6">
+                <h2 class="text-lg font-bold text-white mb-2">4. Data Deletion</h2>
+                <p class="text-sm leading-relaxed">
+                    You may request deletion of your score history by using the
+                    <code class="bg-white/10 px-1 rounded text-xs">DELETE /api/player/&lt;username&gt;/reset/</code>
+                    endpoint. This permanently removes all your score records from the database.
+                </p>
+            </section>
+
+            <section class="mb-6">
+                <h2 class="text-lg font-bold text-white mb-2">5. Cookies</h2>
+                <p class="text-sm leading-relaxed">
+                    CLUTCH RUN does not use tracking cookies or third-party analytics services.
+                    The only cookies used are standard Django CSRF tokens required for secure form submissions.
+                </p>
+            </section>
+
+            <section class="mb-8">
+                <h2 class="text-lg font-bold text-white mb-2">6. Contact</h2>
+                <p class="text-sm leading-relaxed">
+                    For questions about this policy, open an issue on our
+                    <a href="https://github.com/arjun906130/fakerun" target="_blank"
+                       class="text-cyan-400 hover:underline">GitHub repository</a>.
+                </p>
+            </section>
+
+            <div class="border-t border-white/10 pt-6 flex justify-between items-center">
+                <a href="{% url 'index' %}"
+                   class="text-[10px] uppercase tracking-widest font-bold text-gray-500 hover:text-cyan-400 transition-colors">
+                    ← Back to Game
+                </a>
+                <span class="text-[10px] uppercase tracking-widest text-gray-600">CLUTCH RUN v1.6.0</span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
