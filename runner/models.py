@@ -30,12 +30,28 @@ class Player(models.Model):
 
 
 class Score(models.Model):
+    DIFFICULTY_CHOICES = [
+        ('easy', 'Easy'),
+        ('medium', 'Medium'),
+        ('hard', 'Hard'),
+    ]
+
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='scores')
     score = models.IntegerField()
+    difficulty = models.CharField(
+        max_length=10,
+        choices=DIFFICULTY_CHOICES,
+        default='medium',
+        help_text='Difficulty preset selected for this run.',
+    )
+    distance = models.IntegerField(
+        default=0,
+        help_text='Total distance (metres) the player survived.',
+    )
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-score']
 
     def __str__(self):
-        return f"{self.player.username}: {self.score}"
+        return f"{self.player.username}: {self.score} ({self.difficulty})"
