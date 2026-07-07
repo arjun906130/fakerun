@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from .models import Player, Score
@@ -19,6 +19,15 @@ def privacy_policy(request):
     Renders the privacy policy page.
     """
     return render(request, 'runner/privacy.html')
+
+
+@require_http_methods(["GET"])
+def robots_txt(request):
+    """
+    Serves the robots.txt file as a plain text response.
+    """
+    content = "User-agent: *\nDisallow: /api/\nDisallow: /admin/\nAllow: /"
+    return HttpResponse(content, content_type="text/plain")
 
 
 @csrf_exempt
