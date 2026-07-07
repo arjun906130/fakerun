@@ -1,4 +1,21 @@
-﻿## [1.5.0] â€” 2026-07-04
+## [1.6.0] â€” 2026-07-07
+
+### Added
+- Rate limiting middleware (`runner/rate_limit.py`) enforcing 60 req/min per IP on API endpoints.
+- `difficulty` and `distance` fields to the `Score` model for granular run tracking.
+- `total_distance` and `highest_distance` properties on the `Player` model.
+- Dedicated Privacy Policy page (`/privacy/`) and template.
+- Search engine optimization with `robots.txt` endpoint.
+- Support for environment variables in `settings.py` (`DJANGO_SECRET_KEY`, `DJANGO_DEBUG`, `DJANGO_ALLOWED_HOSTS`).
+- New CSS animations in `game.css`: game-over screen entrance, death burst particles, and score counting glow.
+
+### Changed
+- Bumped in-game version badge to `V1.6.0`.
+- Sanitized `ALLOWED_HOSTS` to load from comma-separated environment string.
+
+---
+
+## [1.5.0] â€” 2026-07-04
 
 ### Added
 - `runner/constants.py` â€” centralised game-wide constant values.
