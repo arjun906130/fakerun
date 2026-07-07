@@ -28,6 +28,17 @@ class Player(models.Model):
         total = sum(s.score for s in self.scores.all())
         return round(total / count)
 
+    @property
+    def total_distance(self):
+        """Returns the sum of distance covered across all runs."""
+        return sum(s.distance for s in self.scores.all())
+
+    @property
+    def highest_distance(self):
+        """Returns the maximum distance achieved in a single run."""
+        top = self.scores.order_by('-distance').first()
+        return top.distance if top else 0
+
 
 class Score(models.Model):
     DIFFICULTY_CHOICES = [
