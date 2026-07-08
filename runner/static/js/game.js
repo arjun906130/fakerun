@@ -618,7 +618,27 @@ class Game {
     }
 
     update(delta) {
-        if (!this.isRunning) return;
+        if (!this.isRunning && !this.isPaused) {
+            // CINEMATIC MENU ANIMATION
+            const time = Date.now() * 0.0005;
+            this.camera.position.x = Math.sin(time) * 3;
+            this.camera.position.z = 9 + Math.cos(time) * 1;
+            this.camera.lookAt(0, 2, -10);
+            
+            // Subtle building drift
+            this.buildings.forEach((b, i) => {
+                b.position.z += delta * 2;
+                if (b.position.z > 30) {
+                    b.position.z = -200;
+                }
+            });
+            
+            // Flicker main light
+            this.mainLight.intensity = 1.5 + Math.sin(time * 10) * 0.5;
+            return;
+        }
+
+        if (this.isPaused) return;
 
         this.speed += this.speedInc;
         const moveDist = this.speed * 80 * delta;
