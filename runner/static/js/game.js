@@ -263,7 +263,7 @@ class Game {
         p.position.y += (Math.random() - 0.5) * 0.2;
         
         this.scene.add(p);
-        this.particles.push({ mesh: p, life: 1.0 });
+        this.particles.push({ mesh: p, life: 1.0, velocity: new THREE.Vector3(0, 0, 0) });
     }
 
     setupEvents() {
@@ -342,13 +342,18 @@ class Game {
         // Sound toggle logic
         const toggleSound = () => {
             this.audioEnabled = !this.audioEnabled;
-            const icon = this.audioEnabled ? '🔊' : '🔇';
+            
+            const iconEl = document.getElementById('sound-icon');
+            if (iconEl) iconEl.innerText = this.audioEnabled ? 'ON' : 'OFF';
             
             const mainBtn = document.getElementById('sound-toggle');
-            if (mainBtn) mainBtn.innerHTML = icon;
-            
-            const hudBtn = document.getElementById('sound-hud-toggle');
-            if (hudBtn) hudBtn.innerHTML = `<span class="text-xl">${icon}</span>`;
+            if (mainBtn) mainBtn.innerHTML = this.audioEnabled ? '🔊' : '🔇';
+
+            const bars = document.querySelectorAll('#sound-bars div');
+            bars.forEach(b => {
+                if (this.audioEnabled) b.classList.remove('bar-muted');
+                else b.classList.add('bar-muted');
+            });
             
             if (this.audioEnabled) this.playSound(800, 'sine', 0.1, 0.1);
         };
@@ -496,6 +501,7 @@ class Game {
 
     triggerClutch() {
         this.clutches++;
+        this.spawnClutchBurst();
         this.playSound(1200, 'sine', 0.1, 0.2);
         this.clutchCooldown = 1.0;
         this.multiplier += 0.2;
@@ -597,6 +603,25 @@ class Game {
         this.obstacles.push(obs);
     }
 
+    spawnClutchBurst() {
+        const colors = [0xffff00, 0xff00ff, 0x00ffff];
+        for (let i = 0; i < 20; i++) {
+            const geo = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+            const mat = new THREE.MeshBasicMaterial({ color: colors[Math.floor(Math.random() * colors.length)] });
+            const p = new THREE.Mesh(geo, mat);
+            p.position.copy(this.playerGroup.position);
+            
+            const velocity = new THREE.Vector3(
+                (Math.random() - 0.5) * 1,
+                (Math.random() - 0.5) * 1,
+                (Math.random() - 0.5) * 1
+            );
+            
+            this.scene.add(p);
+            this.particles.push({ mesh: p, life: 1.0, velocity: velocity });
+        }
+    }
+
     spawnPowerup() {
         const lane = Math.floor(Math.random() * 3) - 1;
         const color = 0x00ff88;
@@ -664,6 +689,21 @@ class Game {
 
         document.getElementById('multiplier-display').innerText = this.multiplier.toFixed(1) + 'x';
         document.getElementById('speed-display').innerText = Math.floor(this.speed * 100);
+
+        // Update Velocity Bars
+        const speedRatio = Math.min(1, (this.speed - 0.35) / 1.0);
+        for (let i = 1; i <= 5; i++) {
+            const bar = document.getElementById(`v-bar-${i}`);
+            if (bar) {
+                if (speedRatio >= i * 0.2) {
+                    bar.style.backgroundColor = '#06b6d4'; // cyan-500
+                    bar.style.boxShadow = '0 0 10px rgba(6, 182, 212, 0.5)';
+                } else {
+                    bar.style.backgroundColor = 'rgba(6, 182, 212, 0.2)';
+                    bar.style.boxShadow = 'none';
+                }
+            }
+        }
 
         // Speed Milestone Flash
         if (this.speed * 100 > this.nextMilestone) {
@@ -784,7 +824,11 @@ class Game {
         for (let i = this.particles.length - 1; i >= 0; i--) {
             const p = this.particles[i];
             p.life -= delta * 2;
-            p.mesh.position.z += moveDist * 0.2;
+            
+            p.mesh.position.x += p.velocity.x * delta * 10;
+            p.mesh.position.y += p.velocity.y * delta * 10;
+            p.mesh.position.z += (p.velocity.z * delta * 10) + (moveDist * 0.2);
+            
             p.mesh.scale.setScalar(p.life);
             p.mesh.material.opacity = p.life;
             
