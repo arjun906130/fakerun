@@ -17,6 +17,7 @@ class Game {
         this.speed = 0.35;
         this.targetSpeed = 0.35;
         this.clutchCooldown = 0;
+        this.clutches = 0;
         this.isRunning = false;
         this.isPaused = false;
         this.difficulty = 'medium';
@@ -494,6 +495,7 @@ class Game {
     }
 
     triggerClutch() {
+        this.clutches++;
         this.playSound(1200, 'sine', 0.1, 0.2);
         this.clutchCooldown = 1.0;
         this.multiplier += 0.2;
@@ -867,6 +869,9 @@ class Game {
         document.getElementById('game-over').classList.remove('hidden');
         document.getElementById('final-score').innerText = Math.floor(this.score);
         document.getElementById('final-distance').innerText = Math.floor(this.distance) + 'm';
+        
+        const clutchesEl = document.getElementById('final-clutches');
+        if (clutchesEl) clutchesEl.innerText = this.clutches;
         
         // Calculate Rating
         const s = Math.floor(this.score);
