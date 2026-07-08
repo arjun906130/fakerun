@@ -37,6 +37,7 @@ class Game {
         this.isNewRecord = false;
         this.audioEnabled = true;
         this.nextMilestone = 60;
+        this.lowEntropy = false;
         this.clock = new THREE.Clock();
         
         this.init();
@@ -336,6 +337,19 @@ class Game {
         if (bloomToggle) {
             bloomToggle.addEventListener('change', () => {
                 this.bloomPass.enabled = bloomToggle.checked;
+            });
+        }
+
+        const lowPerfToggle = document.getElementById('low-perf-toggle');
+        if (lowPerfToggle) {
+            lowPerfToggle.addEventListener('change', () => {
+                this.lowEntropy = lowPerfToggle.checked;
+                // Instant feedback if needed
+                if (this.lowEntropy) {
+                    this.renderer.setPixelRatio(1);
+                } else {
+                    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                }
             });
         }
 
@@ -820,7 +834,9 @@ class Game {
         this.mainLight.position.x = this.playerGroup.position.x;
 
         // Particles
-        this.spawnParticle();
+        if (!this.lowEntropy || Math.random() > 0.7) {
+            this.spawnParticle();
+        }
         for (let i = this.particles.length - 1; i >= 0; i--) {
             const p = this.particles[i];
             p.life -= delta * 2;
