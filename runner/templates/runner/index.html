@@ -141,12 +141,16 @@
     <!-- Loading Screen -->
     <div id="loader"
         class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black transition-opacity duration-1000">
-        <div class="relative w-24 h-24 mb-8">
+        <div class="relative w-32 h-32 mb-8">
             <div class="absolute inset-0 border-4 border-white/5 rounded-full"></div>
             <div class="absolute inset-0 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-            <div id="load-pct" class="absolute inset-0 flex items-center justify-center text-sm font-black italic">0%</div>
+            <div class="absolute inset-4 border border-cyan-500/20 rounded-full animate-ping"></div>
+            <div id="load-pct" class="absolute inset-0 flex items-center justify-center text-lg font-black italic text-red-500">0%</div>
         </div>
-        <h2 id="loader-status" class="text-xl font-light tracking-[0.4em] uppercase animate-pulse text-gray-400">Initializing Engine</h2>
+        <div class="flex flex-col items-center">
+            <h2 id="loader-status" class="text-xl font-light tracking-[0.4em] uppercase text-gray-400 mb-2">Initializing Engine</h2>
+            <div id="loader-details" class="text-[10px] font-mono text-cyan-500/40 uppercase tracking-widest h-4"></div>
+        </div>
     </div>
 
     <!-- HUD -->

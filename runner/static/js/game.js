@@ -45,14 +45,25 @@ class Game {
         // Simulated Loader
         let progress = 0;
         const statusText = [
+            "Initializing Core",
             "Syncing Hyper-Drive",
             "Calibrating Thrusters",
             "Charging Neon Flux",
-            "Establishing Link"
+            "Establishing Link",
+            "System Ready"
+        ];
+        
+        const subStatus = [
+            "Mem-Check: OK",
+            "Glow-Buffers: Ready",
+            "Collision-Matrix: Active",
+            "Neon-Pulse: Synchronized",
+            "Engine-Link: Online",
+            "Protocol-X: Operational"
         ];
         
         const loaderInt = setInterval(() => {
-            progress += Math.floor(Math.random() * 5) + 2;
+            progress += Math.floor(Math.random() * 8) + 1;
             if (progress >= 100) {
                 progress = 100;
                 clearInterval(loaderInt);
@@ -68,11 +79,17 @@ class Game {
             if (pctEl) pctEl.innerText = `${progress}%`;
             
             const statusEl = document.getElementById('loader-status');
+            const detailsEl = document.getElementById('loader-details');
+            
             if (statusEl) {
                 const idx = Math.floor((progress / 100) * (statusText.length - 1));
                 statusEl.innerText = statusText[idx];
             }
-        }, 50);
+            
+            if (detailsEl && Math.random() > 0.8) {
+                detailsEl.innerText = subStatus[Math.floor(Math.random() * subStatus.length)];
+            }
+        }, 60);
     }
 
     /**
