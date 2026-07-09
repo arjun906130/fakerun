@@ -954,7 +954,12 @@ class Game {
         fetch('/api/submit-score/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: this.username, score: Math.floor(this.score) })
+            body: JSON.stringify({
+                username: this.username,
+                score: Math.floor(this.score),
+                difficulty: this.difficulty,
+                distance: Math.floor(this.distance)
+            })
         }).then(() => this.loadLeaderboard());
     }
 
