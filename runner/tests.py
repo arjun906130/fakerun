@@ -1,4 +1,4 @@
-﻿from django.test import TestCase, Client
+from django.test import TestCase, Client
 from django.urls import reverse
 from .models import Player, Score
 from .utils import is_valid_username, calculate_rating, format_score
@@ -79,18 +79,28 @@ class SubmitScoreAPITest(TestCase):
         self.url = reverse("submit_score")
 
     def test_submit_valid_score(self):
-        payload = json.dumps({"username": "NEONACE", "score": 9999})
+        payload = json.dumps({"username": "NEONACE", "score": 9999, "difficulty": "hard", "distance": 1200})
         response = self.client.post(self.url, data=payload, content_type="application/json")
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data["status"], "success")
         self.assertIn("best_score", data)
         self.assertIn("rating", data)
+        
+        # Verify the saved score record has hard difficulty and 1200 distance
+        score_record = Score.objects.filter(player__username="NEONACE").first()
+        self.assertIsNotNone(score_record)
+        self.assertEqual(score_record.score, 9999)
+        self.assertEqual(score_record.difficulty, "hard")
+        self.assertEqual(score_record.distance, 1200)
 
     def test_submit_creates_player(self):
         payload = json.dumps({"username": "NEWACE", "score": 5000})
         self.client.post(self.url, data=payload, content_type="application/json")
         self.assertTrue(Player.objects.filter(username="NEWACE").exists())
+        score_record = Score.objects.filter(player__username="NEWACE").first()
+        self.assertEqual(score_record.difficulty, "medium")  # default
+        self.assertEqual(score_record.distance, 0)  # default
 
     def test_submit_missing_score(self):
         payload = json.dumps({"username": "NEONACE"})

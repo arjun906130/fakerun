@@ -57,9 +57,18 @@ def submit_score(request):
             if not isinstance(score_value, int) or score_value < 0:
                 return JsonResponse({'status': 'error', 'message': 'Score must be a non-negative integer'}, status=400)
 
+            # Extract and validate optional difficulty and distance parameters
+            difficulty = data.get('difficulty', 'medium')
+            if difficulty not in ['easy', 'medium', 'hard']:
+                difficulty = 'medium'
+            
+            distance = data.get('distance', 0)
+            if not isinstance(distance, int) or distance < 0:
+                distance = 0
+
             # Atomic get-or-create player profile, then log the score
             player, _ = Player.objects.get_or_create(username=username)
-            Score.objects.create(player=player, score=score_value)
+            Score.objects.create(player=player, score=score_value, difficulty=difficulty, distance=distance)
 
             return JsonResponse({
                 'status': 'success',
