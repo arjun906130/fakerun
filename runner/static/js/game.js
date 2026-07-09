@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { PerformanceProfiler } from './profiler.js';
 
 class Game {
     constructor() {
@@ -39,6 +40,7 @@ class Game {
         this.nextMilestone = 60;
         this.lowEntropy = false;
         this.clock = new THREE.Clock();
+        this.profiler = new PerformanceProfiler();
         
         this.init();
         this.setupEvents();
@@ -659,6 +661,15 @@ class Game {
     }
 
     update(delta) {
+        if (this.profiler) {
+            this.profiler.update();
+            const stats = this.profiler.getStats();
+            const fpsEl = document.getElementById('fps-display');
+            if (fpsEl) {
+                fpsEl.innerText = stats.fps;
+            }
+        }
+
         if (!this.isRunning && !this.isPaused) {
             // CINEMATIC MENU ANIMATION
             const time = Date.now() * 0.0005;

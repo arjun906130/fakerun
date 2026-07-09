@@ -198,19 +198,27 @@
             CLUTCH! +1,000
         </div>
 
-        <div class="glass px-6 py-3 rounded-2xl text-right">
-            <p class="text-xs uppercase tracking-widest text-red-500 font-bold mb-1">Mult</p>
-            <h1 id="multiplier-display" class="text-4xl font-black tabular-nums">1.0x</h1>
-        </div>
-
-        <button id="sound-hud-toggle" class="glass p-3 rounded-xl pointer-events-auto hover:bg-white/10 transition-all flex items-center gap-2">
-            <div id="sound-bars" class="flex gap-[2px] items-center h-4">
-                <div class="w-[2px] h-2 bg-yellow-400 bar-anim"></div>
-                <div class="w-[2px] h-4 bg-yellow-400 bar-anim" style="animation-delay: 0.1s"></div>
-                <div class="w-[2px] h-3 bg-yellow-400 bar-anim" style="animation-delay: 0.2s"></div>
+        <div class="flex gap-4 items-center">
+            <div class="glass px-6 py-3 rounded-2xl text-right">
+                <p class="text-xs uppercase tracking-widest text-red-500 font-bold mb-1">Mult</p>
+                <h1 id="multiplier-display" class="text-4xl font-black tabular-nums">1.0x</h1>
             </div>
-            <span id="sound-icon" class="text-sm font-bold">ON</span>
-        </button>
+
+            <div class="flex flex-col gap-2">
+                <button id="sound-hud-toggle" class="glass p-3 rounded-xl pointer-events-auto hover:bg-white/10 transition-all flex items-center gap-2">
+                    <div id="sound-bars" class="flex gap-[2px] items-center h-4">
+                        <div class="w-[2px] h-2 bg-yellow-400 bar-anim"></div>
+                        <div class="w-[2px] h-4 bg-yellow-400 bar-anim" style="animation-delay: 0.1s"></div>
+                        <div class="w-[2px] h-3 bg-yellow-400 bar-anim" style="animation-delay: 0.2s"></div>
+                    </div>
+                    <span id="sound-icon" class="text-sm font-bold">ON</span>
+                </button>
+                <div id="profiler-hud" class="glass px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-[9px] uppercase font-bold tracking-widest text-cyan-400/80 pointer-events-auto">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>FPS: <span id="fps-display" class="font-mono text-white">--</span></span>
+                </div>
+            </div>
+        </div>
 
         <!-- Combo Counter -->
         <div id="combo-hud"
