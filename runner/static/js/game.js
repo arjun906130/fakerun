@@ -9,6 +9,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { PerformanceProfiler } from './profiler.js';
+import { AudioEngine } from './audio.js';
 
 class Game {
     constructor() {
@@ -41,6 +42,7 @@ class Game {
         this.lowEntropy = false;
         this.clock = new THREE.Clock();
         this.profiler = new PerformanceProfiler();
+        this.audio = new AudioEngine();
         
         this.init();
         this.setupEvents();
@@ -270,6 +272,16 @@ class Game {
     }
 
     setupEvents() {
+        const initAudio = () => {
+            if (this.audio) this.audio.init();
+            window.removeEventListener('click', initAudio);
+            window.removeEventListener('keydown', initAudio);
+            window.removeEventListener('touchstart', initAudio);
+        };
+        window.addEventListener('click', initAudio, { once: true });
+        window.addEventListener('keydown', initAudio, { once: true });
+        window.addEventListener('touchstart', initAudio, { once: true });
+
         const safeAddEvent = (id, event, callback) => {
             const el = document.getElementById(id);
             if (el) el.addEventListener(event, callback);
@@ -322,7 +334,6 @@ class Game {
         diffBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 this.difficulty = btn.getAttribute('data-diff');
-                this.playSound(400, 'sine', 0.1, 0.1); // UI Feedback
                 
                 // Update visuals
                 diffBtns.forEach(b => {
@@ -358,6 +369,12 @@ class Game {
         // Sound toggle logic
         const toggleSound = () => {
             this.audioEnabled = !this.audioEnabled;
+            if (this.audio) {
+                this.audio.enabled = this.audioEnabled;
+                if (this.audio.masterGain) {
+                    this.audio.masterGain.gain.value = this.audioEnabled ? 0.4 : 0;
+                }
+            }
             
             const iconEl = document.getElementById('sound-icon');
             if (iconEl) iconEl.innerText = this.audioEnabled ? 'ON' : 'OFF';
@@ -371,7 +388,9 @@ class Game {
                 else b.classList.add('bar-muted');
             });
             
-            if (this.audioEnabled) this.playSound(800, 'sine', 0.1, 0.1);
+            if (this.audioEnabled) {
+                if (this.audio.playPowerup) this.audio.playPowerup();
+            }
         };
 
         // Create main sound toggle if it doesn't exist (legacy/backup)
@@ -395,31 +414,9 @@ class Game {
      * @param {number} volume - Volume gain
      */
     playSound(freq, type = 'square', duration = 0.1, volume = 0.1) {
-        if (!this.audioEnabled) return;
-        
-        if (!this.audioCtx) {
-            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (this.audio && this.audio.enabled) {
+            this.audio._beep(freq, type, duration, volume);
         }
-        
-        const ctx = this.audioCtx;
-        if (ctx.state === 'suspended') {
-            ctx.resume();
-        }
-        
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        
-        gain.gain.setValueAtTime(volume, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
-        
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        
-        osc.start();
-        osc.stop(ctx.currentTime + duration);
     }
 
     /**
@@ -456,9 +453,6 @@ class Game {
      * Resets game state and hides menus to start a new run.
      */
     startGame() {
-        this.playSound(440, 'square', 0.2);
-        setTimeout(() => this.playSound(880, 'square', 0.4), 100);
-        
         this.isRunning = true;
         this.score = 0;
         this.distance = 0;
@@ -499,14 +493,12 @@ class Game {
         const timer = setInterval(() => {
             if (count > 0) {
                 countdown.innerText = count;
-                this.playSound(600, 'sine', 0.2, 0.2);
                 gsap.fromTo(countdown, { scale: 2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3 });
                 gsap.to(countdown, { opacity: 0, duration: 0.2, delay: 0.7 });
                 count--;
             } else {
                 clearInterval(timer);
                 countdown.innerText = "GO!";
-                this.playSound(1200, 'sine', 0.5, 0.4);
                 gsap.fromTo(countdown, { scale: 2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3 });
                 gsap.to(countdown, { opacity: 0, scale: 3, duration: 0.5, onComplete: () => countdown.remove() });
                 this.isRunning = true;
@@ -518,7 +510,7 @@ class Game {
     triggerClutch() {
         this.clutches++;
         this.spawnClutchBurst();
-        this.playSound(1200, 'sine', 0.1, 0.2);
+        if (this.audio) this.audio.playClutch();
         this.clutchCooldown = 1.0;
         this.multiplier += 0.2;
         this.score += 1000;
@@ -569,7 +561,7 @@ class Game {
      */
     jump() {
         if (this.isJumping || this.isSliding) return;
-        this.playSound(300, 'triangle', 0.4);
+        if (this.audio) this.audio.playJump();
         this.isJumping = true;
         gsap.to(this.playerGroup.position, {
             y: 4.5, duration: 0.4, ease: "power2.out",
@@ -584,7 +576,7 @@ class Game {
      */
     slide() {
         if (this.isSliding || this.isJumping) return;
-        this.playSound(150, 'sawtooth', 0.4);
+        if (this.audio) this.audio.playSlide();
         this.isSliding = true;
         gsap.to(this.playerGroup.scale, { y: 0.3, duration: 0.2 });
         gsap.to(this.playerGroup.position, { y: 0.4, duration: 0.2 });
@@ -747,7 +739,6 @@ class Game {
             this.nextMilestone += 10;
             this.bloomPass.strength = 5.0;
             gsap.to(this.bloomPass, { strength: 1.2, duration: 1.0 });
-            this.playSound(1500, 'sine', 0.5, 0.1);
         }
 
         // Combo timeout check
@@ -885,8 +876,7 @@ class Game {
     }
 
     collectPowerup() {
-        this.playSound(800, 'sine', 0.5, 0.2);
-        setTimeout(() => this.playSound(1000, 'sine', 0.5, 0.2), 100);
+        if (this.audio) this.audio.playPowerup();
         
         this.hasShield = true;
         this.multiplier += 0.5;
@@ -920,7 +910,7 @@ class Game {
 
     gameOver() {
         if (this.hasShield) {
-            this.playSound(200, 'sawtooth', 0.3, 0.4);
+            if (this.audio) this.audio.playCrash();
             this.hasShield = false;
             this.shieldVisual.material.opacity = 0;
             // Explosion or break effect
@@ -937,7 +927,7 @@ class Game {
             this.clutchCooldown = 1.0;
             return;
         }
-        this.playSound(100, 'sawtooth', 0.8, 0.3);
+        if (this.audio) this.audio.playCrash();
         
         // Heavy Shake
         gsap.to(this.camera.position, {
