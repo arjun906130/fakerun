@@ -603,15 +603,27 @@ class Game {
         const type = Math.random();
         let obs;
         
+        // Calculate a speed-based intensity shift
+        const speedScale = Math.min(1.0, (this.speed - 0.35) / 1.0);
+        
         if (type < 0.4) { // Low bar (jump)
-            obs = new THREE.Mesh(new THREE.BoxGeometry(4, 1.2, 0.8), new THREE.MeshStandardMaterial({ color: 0xff0055, emissive: 0xff0000 }));
+            // Color shifts from magenta/neon red to deep blazing crimson
+            const baseColor = new THREE.Color().setHSL(0.95 - (speedScale * 0.1), 1.0, 0.5);
+            const emissColor = new THREE.Color().setHSL(0.95 - (speedScale * 0.1), 1.0, 0.3 + (speedScale * 0.3));
+            obs = new THREE.Mesh(new THREE.BoxGeometry(4, 1.2, 0.8), new THREE.MeshStandardMaterial({ color: baseColor, emissive: emissColor }));
             obs.position.set(this.lanes[lane + 1], 0.6, -100);
         } else if (type < 0.7) { // High bar (slide)
-            obs = new THREE.Mesh(new THREE.BoxGeometry(4, 1.5, 0.8), new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x0088ff }));
+            // Color shifts from cyan/electric blue to deep ultraviolet
+            const baseColor = new THREE.Color().setHSL(0.55 + (speedScale * 0.15), 1.0, 0.5);
+            const emissColor = new THREE.Color().setHSL(0.55 + (speedScale * 0.15), 1.0, 0.3 + (speedScale * 0.3));
+            obs = new THREE.Mesh(new THREE.BoxGeometry(4, 1.5, 0.8), new THREE.MeshStandardMaterial({ color: baseColor, emissive: emissColor }));
             obs.position.set(this.lanes[lane + 1], 3.5, -100);
             obs.isHigh = true;
         } else { // Center shard
-            obs = new THREE.Mesh(new THREE.OctahedronGeometry(1.5), new THREE.MeshStandardMaterial({ color: 0xffcc00, emissive: 0xaa6600 }));
+            // Color shifts from golden amber to neon orange
+            const baseColor = new THREE.Color().setHSL(0.12 + (speedScale * 0.08), 1.0, 0.5);
+            const emissColor = new THREE.Color().setHSL(0.12 + (speedScale * 0.08), 1.0, 0.3 + (speedScale * 0.3));
+            obs = new THREE.Mesh(new THREE.OctahedronGeometry(1.5), new THREE.MeshStandardMaterial({ color: baseColor, emissive: emissColor }));
             obs.position.set(this.lanes[lane + 1], 1.5, -100);
         }
 
