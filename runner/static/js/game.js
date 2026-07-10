@@ -330,6 +330,7 @@ class Game {
         safeAddEvent('back-btn', 'click', () => this.quitToMenu());
         safeAddEvent('view-stats-btn', 'click', () => this.showStatsModal());
         safeAddEvent('close-stats-btn', 'click', () => this.hideStatsModal());
+        safeAddEvent('reset-stats-btn', 'click', () => this.resetPlayerStats());
 
         // Difficulty buttons (using Event Delegation or direct loop)
         const diffBtns = document.querySelectorAll('.diff-btn');
@@ -485,6 +486,30 @@ class Game {
 
     hideStatsModal() {
         document.getElementById('stats-modal').classList.add('hidden');
+    }
+
+    async resetPlayerStats() {
+        const usernameInput = document.getElementById('username-input').value.trim().toUpperCase();
+        if (!usernameInput) return;
+        
+        if (confirm(`ARE YOU SURE YOU WANT TO WIPE ALL HISTORY FOR PILOT ${usernameInput}? THIS CANNOT BE UNDONE.`)) {
+            try {
+                const res = await fetch(`/api/player/${encodeURIComponent(usernameInput)}/reset/`, {
+                    method: 'DELETE'
+                });
+                if (res.ok) {
+                    alert("PILOT HISTORY WIPED SUCCESSFULLY.");
+                    this.hideStatsModal();
+                    this.loadLeaderboard();
+                } else {
+                    const data = await res.json();
+                    alert(`ERROR: ${data.message || 'Failed to reset scores.'}`);
+                }
+            } catch (e) {
+                console.error(e);
+                alert("NETWORK ERROR. UNABLE TO WIPE DATA.");
+            }
+        }
     }
 
     /**
