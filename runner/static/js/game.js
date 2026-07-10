@@ -979,13 +979,24 @@ class Game {
     async loadLeaderboard() {
         fetch('/api/leaderboard/').then(r => r.json()).then(data => {
             const container = document.getElementById('top-scores');
-            container.innerHTML = data.leaderboard.map((s, i) => `
-                <div class="flex justify-between items-center bg-white/5 p-2 rounded border border-white/5">
-                    <span class="text-cyan-400 font-bold w-6">#${i+1}</span>
-                    <span class="flex-1 px-2 truncate">${s.username}</span>
-                    <span class="font-mono text-pink-500">${s.score}</span>
-                </div>
-            `).join('');
+            container.innerHTML = data.leaderboard.map((s, i) => {
+                let diffColor = 'text-green-400';
+                if (s.difficulty === 'hard') diffColor = 'text-red-500';
+                else if (s.difficulty === 'medium') diffColor = 'text-cyan-400';
+                return `
+                    <div class="flex justify-between items-center bg-white/5 p-2 rounded border border-white/5 text-xs">
+                        <div class="flex items-center gap-2 truncate">
+                            <span class="text-cyan-400 font-bold">#${i+1}</span>
+                            <span class="truncate font-medium text-gray-200">${s.username}</span>
+                            <span class="text-[9px] uppercase tracking-widest font-black px-1.5 py-0.5 rounded bg-white/10 ${diffColor}">${s.difficulty}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-mono text-pink-500 font-bold">${s.score.toLocaleString()}</span>
+                            <span class="text-[9px] text-gray-600 block">${s.distance}m</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         });
     }
 

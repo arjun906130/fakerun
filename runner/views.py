@@ -102,6 +102,8 @@ def get_leaderboard(request):
             'rank': idx + 1,
             'username': score.player.username,
             'score': score.score,
+            'difficulty': score.difficulty,
+            'distance': score.distance,
             'timestamp': score.timestamp.strftime('%Y-%m-%d %H:%M'),
         }
         for idx, score in enumerate(top_scores)
