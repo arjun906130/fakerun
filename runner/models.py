@@ -39,6 +39,24 @@ class Player(models.Model):
         top = self.scores.order_by('-distance').first()
         return top.distance if top else 0
 
+    @property
+    def best_score_easy(self):
+        """Returns the player's highest score on Easy difficulty."""
+        top = self.scores.filter(difficulty='easy').order_by('-score').first()
+        return top.score if top else 0
+
+    @property
+    def best_score_medium(self):
+        """Returns the player's highest score on Medium difficulty."""
+        top = self.scores.filter(difficulty='medium').order_by('-score').first()
+        return top.score if top else 0
+
+    @property
+    def best_score_hard(self):
+        """Returns the player's highest score on Hard difficulty."""
+        top = self.scores.filter(difficulty='hard').order_by('-score').first()
+        return top.score if top else 0
+
 
 class Score(models.Model):
     DIFFICULTY_CHOICES = [

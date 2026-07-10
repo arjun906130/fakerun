@@ -138,6 +138,9 @@ def get_player_stats(request, username):
         return JsonResponse({
             'username': player.username,
             'best_score': player.best_score,
+            'best_score_easy': player.best_score_easy,
+            'best_score_medium': player.best_score_medium,
+            'best_score_hard': player.best_score_hard,
             'total_runs': player.total_runs,
             'average_score': player.average_score,
             'member_since': player.created_at.strftime('%Y-%m-%d'),

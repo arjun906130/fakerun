@@ -184,8 +184,9 @@ class PlayerStatsAPITest(TestCase):
     def setUp(self):
         self.client = Client()
         self.player = Player.objects.create(username="STATSMAN")
-        Score.objects.create(player=self.player, score=20000)
-        Score.objects.create(player=self.player, score=10000)
+        Score.objects.create(player=self.player, score=20000, difficulty="medium")
+        Score.objects.create(player=self.player, score=10000, difficulty="easy")
+        Score.objects.create(player=self.player, score=30000, difficulty="hard")
 
     def test_stats_returns_200(self):
         url = reverse("player_stats", args=["STATSMAN"])
@@ -195,8 +196,12 @@ class PlayerStatsAPITest(TestCase):
     def test_stats_has_expected_fields(self):
         url = reverse("player_stats", args=["STATSMAN"])
         data = json.loads(self.client.get(url).content)
-        for field in ("username", "best_score", "total_runs", "average_score", "member_since"):
+        for field in ("username", "best_score", "best_score_easy", "best_score_medium", "best_score_hard", "total_runs", "average_score", "member_since"):
             self.assertIn(field, data)
+        self.assertEqual(data["best_score_easy"], 10000)
+        self.assertEqual(data["best_score_medium"], 20000)
+        self.assertEqual(data["best_score_hard"], 30000)
+        self.assertEqual(data["best_score"], 30000)
 
     def test_stats_unknown_player_404(self):
         url = reverse("player_stats", args=["NOBODY"])
