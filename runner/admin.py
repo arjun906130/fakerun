@@ -23,8 +23,8 @@ class PlayerAdmin(admin.ModelAdmin):
 
 @admin.register(Score)
 class ScoreAdmin(admin.ModelAdmin):
-    list_display = ('player', 'score', 'timestamp')
-    list_filter = ('player',)
+    list_display = ('player', 'score', 'difficulty', 'distance', 'timestamp')
+    list_filter = ('difficulty', 'timestamp', 'player')
     search_fields = ('player__username',)
     readonly_fields = ('timestamp',)
     ordering = ('-score',)
