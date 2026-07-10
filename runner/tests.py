@@ -153,6 +153,19 @@ class LeaderboardAPITest(TestCase):
         scores = [e["score"] for e in data["leaderboard"]]
         self.assertEqual(scores, sorted(scores, reverse=True))
 
+    def test_leaderboard_filter_by_difficulty(self):
+        player = Player.objects.create(username="DIFFPLAYER")
+        Score.objects.create(player=player, score=15000, difficulty="hard")
+        Score.objects.create(player=player, score=12000, difficulty="easy")
+        
+        response = self.client.get(self.url, {'difficulty': 'hard'})
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        
+        scores = [e["score"] for e in data["leaderboard"]]
+        self.assertIn(15000, scores)
+        self.assertNotIn(12000, scores)
+
 
 class HealthCheckTest(TestCase):
     """Tests for the health check endpoint."""

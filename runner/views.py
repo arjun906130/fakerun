@@ -88,9 +88,15 @@ def submit_score(request):
 def get_leaderboard(request):
     """
     Retrieves the top 15 all-time high scores for the global leaderboard.
+    Optionally filters by difficulty.
     Returns a JSON response with username, score, and formatted timestamp.
     """
-    top_scores = Score.objects.select_related('player').order_by('-score')[:15]
+    difficulty = request.GET.get('difficulty')
+    queryset = Score.objects.select_related('player')
+    if difficulty in ['easy', 'medium', 'hard']:
+        queryset = queryset.filter(difficulty=difficulty)
+    
+    top_scores = queryset.order_by('-score')[:15]
     leaderboard = [
         {
             'rank': idx + 1,
