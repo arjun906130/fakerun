@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from .models import Player, Score
 from .utils import is_valid_username, calculate_rating, format_score
+from .cache import get_cached_leaderboard, set_cached_leaderboard, invalidate_leaderboard_cache
 
 
 def index(request):
@@ -69,6 +70,7 @@ def submit_score(request):
             # Atomic get-or-create player profile, then log the score
             player, _ = Player.objects.get_or_create(username=username)
             Score.objects.create(player=player, score=score_value, difficulty=difficulty, distance=distance)
+            invalidate_leaderboard_cache()
 
             return JsonResponse({
                 'status': 'success',
@@ -92,8 +94,15 @@ def get_leaderboard(request):
     Returns a JSON response with username, score, and formatted timestamp.
     """
     difficulty = request.GET.get('difficulty')
+    if difficulty not in ['easy', 'medium', 'hard']:
+        difficulty = None
+
+    cached_data = get_cached_leaderboard(difficulty)
+    if cached_data is not None:
+        return JsonResponse({'leaderboard': cached_data})
+
     queryset = Score.objects.select_related('player')
-    if difficulty in ['easy', 'medium', 'hard']:
+    if difficulty:
         queryset = queryset.filter(difficulty=difficulty)
     
     top_scores = queryset.order_by('-score')[:15]
@@ -108,6 +117,7 @@ def get_leaderboard(request):
         }
         for idx, score in enumerate(top_scores)
     ]
+    set_cached_leaderboard(leaderboard, difficulty)
     return JsonResponse({'leaderboard': leaderboard})
 
 
@@ -121,6 +131,7 @@ def reset_scores(request, username):
     try:
         player = Player.objects.get(username=username)
         deleted_count, _ = player.scores.all().delete()
+        invalidate_leaderboard_cache()
         return JsonResponse({'status': 'success', 'deleted': deleted_count})
     except Player.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Player not found'}, status=404)

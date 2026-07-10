@@ -207,3 +207,34 @@ class PlayerStatsAPITest(TestCase):
         url = reverse("player_stats", args=["NOBODY"])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
+
+
+class LeaderboardCacheTest(TestCase):
+    """Unit tests for the leaderboard cache wrapper functions."""
+
+    def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
+
+    def test_cache_set_and_get(self):
+        from .cache import get_cached_leaderboard, set_cached_leaderboard
+        dummy_data = [{'username': 'TEST1', 'score': 1000}]
+        set_cached_leaderboard(dummy_data)
+        self.assertEqual(get_cached_leaderboard(), dummy_data)
+
+    def test_cache_set_and_get_difficulty(self):
+        from .cache import get_cached_leaderboard, set_cached_leaderboard
+        dummy_data = [{'username': 'TEST1', 'score': 1500}]
+        set_cached_leaderboard(dummy_data, difficulty="hard")
+        self.assertEqual(get_cached_leaderboard(difficulty="hard"), dummy_data)
+        self.assertIsNone(get_cached_leaderboard())
+
+    def test_cache_invalidation(self):
+        from .cache import get_cached_leaderboard, set_cached_leaderboard, invalidate_leaderboard_cache
+        dummy_data = [{'username': 'TEST1', 'score': 1000}]
+        set_cached_leaderboard(dummy_data)
+        set_cached_leaderboard(dummy_data, difficulty="hard")
+        invalidate_leaderboard_cache()
+        self.assertIsNone(get_cached_leaderboard())
+        self.assertIsNone(get_cached_leaderboard(difficulty="hard"))
+
