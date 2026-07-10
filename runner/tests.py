@@ -175,7 +175,16 @@ class HealthCheckTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data["status"], "ok")
+        self.assertEqual(data["database"], "skipped")
         self.assertIn("version", data)
+
+    def test_health_with_db_check_returns_ok(self):
+        response = self.client.get("/health/", {"check_db": "true"})
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data["status"], "ok")
+        self.assertEqual(data["database"], "healthy")
+
 
 
 class PlayerStatsAPITest(TestCase):
