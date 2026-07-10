@@ -328,6 +328,8 @@ class Game {
         safeAddEvent('resume-btn', 'click', () => this.togglePause());
         safeAddEvent('pause-back-btn', 'click', () => this.quitToMenu());
         safeAddEvent('back-btn', 'click', () => this.quitToMenu());
+        safeAddEvent('view-stats-btn', 'click', () => this.showStatsModal());
+        safeAddEvent('close-stats-btn', 'click', () => this.hideStatsModal());
 
         // Difficulty buttons (using Event Delegation or direct loop)
         const diffBtns = document.querySelectorAll('.diff-btn');
@@ -447,6 +449,42 @@ class Game {
         this.powerups.forEach(p => this.scene.remove(p));
         this.obstacles = [];
         this.powerups = [];
+    }
+
+    async showStatsModal() {
+        const usernameInput = document.getElementById('username-input').value.trim().toUpperCase();
+        if (!usernameInput) {
+            alert("ENTER CALLSIGN FIRST TO RETRIEVE DOSSIER.");
+            return;
+        }
+        
+        document.getElementById('stats-player-title').innerText = `CALLSIGN: ${usernameInput}`;
+        
+        try {
+            const res = await fetch(`/api/player/${encodeURIComponent(usernameInput)}/stats/`);
+            if (res.ok) {
+                const data = await res.json();
+                document.getElementById('stats-runs').innerText = data.total_runs;
+                document.getElementById('stats-avg-score').innerText = data.average_score.toLocaleString();
+                document.getElementById('stats-best-easy').innerText = data.best_score_easy.toLocaleString();
+                document.getElementById('stats-best-medium').innerText = data.best_score_medium.toLocaleString();
+                document.getElementById('stats-best-hard').innerText = data.best_score_hard.toLocaleString();
+            } else {
+                document.getElementById('stats-runs').innerText = "0";
+                document.getElementById('stats-avg-score').innerText = "0";
+                document.getElementById('stats-best-easy').innerText = "0";
+                document.getElementById('stats-best-medium').innerText = "0";
+                document.getElementById('stats-best-hard').innerText = "0";
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        
+        document.getElementById('stats-modal').classList.remove('hidden');
+    }
+
+    hideStatsModal() {
+        document.getElementById('stats-modal').classList.add('hidden');
     }
 
     /**

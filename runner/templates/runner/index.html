@@ -254,7 +254,12 @@
             </div>
 
             <input type="text" id="username-input" placeholder="ENTER CALLSIGN" maxlength="12" pattern="[A-Z0-9]+"
-                class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 mb-4 text-center focus:outline-none focus:border-blue-500 transition-colors uppercase tracking-widest font-bold">
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 mb-3 text-center focus:outline-none focus:border-blue-500 transition-colors uppercase tracking-widest font-bold">
+
+            <button id="view-stats-btn" type="button"
+                class="w-full bg-transparent hover:bg-white/5 border border-white/10 py-3.5 rounded-xl mb-4 text-xs font-bold uppercase tracking-widest transition-all cursor-pointer text-cyan-400 hover:text-cyan-300">
+                View Profile Stats
+            </button>
 
             <div class="grid grid-cols-3 gap-2 mb-6">
                 <button type="button" class="diff-btn bg-white/5 border border-cyan-500/30 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity cursor-pointer" data-diff="easy">Easy</button>
@@ -378,10 +383,55 @@
             </button>
         </div>
     </div>
+    <!-- Stats Modal -->
+    <div id="stats-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden">
+        <div class="max-w-md w-full p-8 glass rounded-3xl text-center border-cyan-500/30">
+            <h2 class="text-4xl font-extrabold mb-1 text-cyan-400 italic tracking-tighter">PILOT DOSSIER</h2>
+            <p id="stats-player-title" class="text-sm font-mono text-gray-400 mb-6 tracking-widest">CALLSIGN: PILOT</p>
 
+            <div class="grid grid-cols-2 gap-4 mb-4 text-left">
+                <div class="glass p-4 rounded-xl">
+                    <p class="text-[9px] uppercase text-gray-400 mb-1 tracking-widest">Total Runs</p>
+                    <p id="stats-runs" class="text-xl font-bold font-mono">0</p>
+                </div>
+                <div class="glass p-4 rounded-xl">
+                    <p class="text-[9px] uppercase text-gray-400 mb-1 tracking-widest">Avg Score</p>
+                    <p id="stats-avg-score" class="text-xl font-bold font-mono">0</p>
+                </div>
+            </div>
+
+            <div class="glass p-4 rounded-xl text-left mb-6">
+                <p class="text-[9px] uppercase text-cyan-400 mb-2 tracking-widest font-bold">Best Scores By Sector</p>
+                <div class="space-y-1.5 text-xs font-mono">
+                    <div class="flex justify-between">
+                        <span class="text-green-400">EASY SECTOR:</span>
+                        <span id="stats-best-easy" class="font-bold text-white">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-cyan-400">MEDIUM SECTOR:</span>
+                        <span id="stats-best-medium" class="font-bold text-white">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-red-500">HARD SECTOR:</span>
+                        <span id="stats-best-hard" class="font-bold text-white">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="close-stats-btn"
+                class="w-full bg-cyan-600 hover:bg-cyan-500 text-white py-3.5 rounded-xl font-bold uppercase tracking-widest transition-all transform hover:scale-105 active:scale-95 mb-3 cursor-pointer">
+                Close Dossier
+            </button>
+            <button id="reset-stats-btn"
+                class="w-full text-red-500 hover:text-red-400 border border-red-500/20 hover:bg-red-500/5 py-2.5 rounded-xl font-bold uppercase text-xs tracking-widest transition-all cursor-pointer">
+                Wipe Profile History
+            </button>
+        </div>
+    </div>
     <script src="{% static 'js/game.js' %}" type="module"></script>
     <style>
-        .diff-btn, #start-btn, #restart-btn, #resume-btn, #pause-back-btn, #back-btn, #sound-hud-toggle {
+        .diff-btn, #start-btn, #restart-btn, #resume-btn, #pause-back-btn, #back-btn, #sound-hud-toggle, #view-stats-btn, #close-stats-btn, #reset-stats-btn {
             cursor: pointer !important;
             touch-action: manipulation;
         }
