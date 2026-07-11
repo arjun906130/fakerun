@@ -154,6 +154,8 @@ def get_player_stats(request, username):
             'best_score_hard': player.best_score_hard,
             'total_runs': player.total_runs,
             'average_score': player.average_score,
+            'total_distance': player.total_distance,
+            'highest_distance': player.highest_distance,
             'member_since': player.created_at.strftime('%Y-%m-%d'),
         })
     except Player.DoesNotExist:
