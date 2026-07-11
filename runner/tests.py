@@ -10,9 +10,9 @@ class PlayerModelTest(TestCase):
 
     def setUp(self):
         self.player = Player.objects.create(username="TESTRUNNER")
-        Score.objects.create(player=self.player, score=5000)
-        Score.objects.create(player=self.player, score=3000)
-        Score.objects.create(player=self.player, score=4000)
+        Score.objects.create(player=self.player, score=5000, distance=300)
+        Score.objects.create(player=self.player, score=3000, distance=150)
+        Score.objects.create(player=self.player, score=4000, distance=200)
 
     def test_best_score(self):
         self.assertEqual(self.player.best_score, 5000)
@@ -22,6 +22,10 @@ class PlayerModelTest(TestCase):
 
     def test_average_score(self):
         self.assertEqual(self.player.average_score, 4000)
+
+    def test_distance_properties(self):
+        self.assertEqual(self.player.total_distance, 650)
+        self.assertEqual(self.player.highest_distance, 300)
 
     def test_best_score_no_runs(self):
         new_player = Player.objects.create(username="NEWPLAYER")
@@ -193,9 +197,9 @@ class PlayerStatsAPITest(TestCase):
     def setUp(self):
         self.client = Client()
         self.player = Player.objects.create(username="STATSMAN")
-        Score.objects.create(player=self.player, score=20000, difficulty="medium")
-        Score.objects.create(player=self.player, score=10000, difficulty="easy")
-        Score.objects.create(player=self.player, score=30000, difficulty="hard")
+        Score.objects.create(player=self.player, score=20000, difficulty="medium", distance=1500)
+        Score.objects.create(player=self.player, score=10000, difficulty="easy", distance=800)
+        Score.objects.create(player=self.player, score=30000, difficulty="hard", distance=2500)
 
     def test_stats_returns_200(self):
         url = reverse("player_stats", args=["STATSMAN"])
@@ -205,12 +209,14 @@ class PlayerStatsAPITest(TestCase):
     def test_stats_has_expected_fields(self):
         url = reverse("player_stats", args=["STATSMAN"])
         data = json.loads(self.client.get(url).content)
-        for field in ("username", "best_score", "best_score_easy", "best_score_medium", "best_score_hard", "total_runs", "average_score", "member_since"):
+        for field in ("username", "best_score", "best_score_easy", "best_score_medium", "best_score_hard", "total_runs", "average_score", "total_distance", "highest_distance", "member_since"):
             self.assertIn(field, data)
         self.assertEqual(data["best_score_easy"], 10000)
         self.assertEqual(data["best_score_medium"], 20000)
         self.assertEqual(data["best_score_hard"], 30000)
         self.assertEqual(data["best_score"], 30000)
+        self.assertEqual(data["total_distance"], 4800)
+        self.assertEqual(data["highest_distance"], 2500)
 
     def test_stats_unknown_player_404(self):
         url = reverse("player_stats", args=["NOBODY"])
