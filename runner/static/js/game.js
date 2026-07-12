@@ -470,12 +470,20 @@ class Game {
                 document.getElementById('stats-best-easy').innerText = data.best_score_easy.toLocaleString();
                 document.getElementById('stats-best-medium').innerText = data.best_score_medium.toLocaleString();
                 document.getElementById('stats-best-hard').innerText = data.best_score_hard.toLocaleString();
+                const totalDistEl = document.getElementById('stats-total-distance');
+                if (totalDistEl) totalDistEl.innerText = (data.total_distance || 0).toLocaleString() + 'm';
+                const maxDistEl = document.getElementById('stats-max-distance');
+                if (maxDistEl) maxDistEl.innerText = (data.highest_distance || 0).toLocaleString() + 'm';
             } else {
                 document.getElementById('stats-runs').innerText = "0";
                 document.getElementById('stats-avg-score').innerText = "0";
                 document.getElementById('stats-best-easy').innerText = "0";
                 document.getElementById('stats-best-medium').innerText = "0";
                 document.getElementById('stats-best-hard').innerText = "0";
+                const totalDistEl = document.getElementById('stats-total-distance');
+                if (totalDistEl) totalDistEl.innerText = "0m";
+                const maxDistEl = document.getElementById('stats-max-distance');
+                if (maxDistEl) maxDistEl.innerText = "0m";
             }
         } catch (e) {
             console.error(e);
