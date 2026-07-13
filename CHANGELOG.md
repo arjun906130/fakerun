@@ -1,3 +1,15 @@
+## [1.7.6] — 2026-07-13
+
+### Added
+- Total Survival Distance and Maximum Run Distance metrics to pilot dossier stats panel.
+- API support for forwarding aggregate player distance metrics in stats responses.
+
+### Changed
+- Updated client-side stats controller to bind and render distance metrics dynamically.
+- Bumped terminal version indicator to v1.7.6.
+
+---
+
 ## [1.6.0] â€” 2026-07-07
 
 ### Added
