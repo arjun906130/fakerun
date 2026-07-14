@@ -27,6 +27,27 @@ class PlayerModelTest(TestCase):
         self.assertEqual(self.player.total_distance, 650)
         self.assertEqual(self.player.highest_distance, 300)
 
+    def test_longest_streak(self):
+        """All setUp scores are 3000-5000; two are below threshold, so longest streak is 1."""
+        self.assertEqual(self.player.longest_streak, 1)
+
+    def test_longest_streak_all_qualifying(self):
+        player = Player.objects.create(username="STREAKER")
+        for s in [6000, 7000, 8000]:
+            Score.objects.create(player=player, score=s)
+        self.assertEqual(player.longest_streak, 3)
+
+    def test_current_streak(self):
+        """Most recent score is 4000 (<5000), so current streak is 0."""
+        self.assertEqual(self.player.current_streak, 0)
+
+    def test_current_streak_active(self):
+        player = Player.objects.create(username="HOTRUN")
+        Score.objects.create(player=player, score=1000)
+        Score.objects.create(player=player, score=9000)
+        Score.objects.create(player=player, score=12000)
+        self.assertEqual(player.current_streak, 2)
+
     def test_best_score_no_runs(self):
         new_player = Player.objects.create(username="NEWPLAYER")
         self.assertEqual(new_player.best_score, 0)
