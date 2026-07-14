@@ -1,3 +1,15 @@
+## [1.8.0] — 2026-07-14
+
+### Added
+- Win-streak tracking on the Player model: `longest_streak` and `current_streak` computed properties.
+- Streak data exposed in `/api/player/<username>/stats/` response and player serializer.
+- Unit tests for streak properties covering active streaks, broken streaks, and edge cases.
+
+### Changed
+- Bumped terminal version indicator to v1.8.0.
+
+---
+
 ## [1.7.6] — 2026-07-13
 
 ### Added
