@@ -1,4 +1,4 @@
-﻿"""
+"""
 serializers.py â€” Lightweight dict serializers for runner model instances.
 
 These serializers convert model objects into plain Python dicts suitable
@@ -49,5 +49,7 @@ def serialize_player(player):
         "rating":          calculate_rating(player.best_score),
         "total_runs":      player.total_runs,
         "average_score":   player.average_score,
+        "longest_streak":  player.longest_streak,
+        "current_streak":  player.current_streak,
         "member_since":    player.created_at.strftime("%Y-%m-%d"),
     }
