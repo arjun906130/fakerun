@@ -57,6 +57,31 @@ class Player(models.Model):
         top = self.scores.filter(difficulty='hard').order_by('-score').first()
         return top.score if top else 0
 
+    @property
+    def longest_streak(self):
+        """Returns the longest consecutive run of scores >= 5000 (C-rating or above)."""
+        scores = self.scores.order_by('timestamp').values_list('score', flat=True)
+        best, current = 0, 0
+        for s in scores:
+            if s >= 5_000:
+                current += 1
+                best = max(best, current)
+            else:
+                current = 0
+        return best
+
+    @property
+    def current_streak(self):
+        """Returns the current consecutive run of scores >= 5000 from most recent backwards."""
+        scores = self.scores.order_by('-timestamp').values_list('score', flat=True)
+        streak = 0
+        for s in scores:
+            if s >= 5_000:
+                streak += 1
+            else:
+                break
+        return streak
+
 
 class Score(models.Model):
     DIFFICULTY_CHOICES = [
